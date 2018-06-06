@@ -32,6 +32,7 @@ lastJump = 0
 goingLeft = False
 goingRight = True
 velocity = 5
+firstMove = True
 
 # Player Location
 x = imageWidth
@@ -114,6 +115,13 @@ runShootCycleCount = 0
 jumpShootCycleCount = 0
 
 
+def music():
+    pygame.mixer.init()
+    pygame.mixer.music.load("../Roboto/Roboto.mp3")
+    pygame.mixer.music.set_volume(0.1)
+    pygame.mixer.music.play(-1)
+
+
 def startScreen():
     while True:
         events = pygame.event.get()
@@ -177,6 +185,7 @@ def gameLoop():
     global jumpCounter
     global lastJump
     global currentPlayer
+    global firstMove
 
     while True:
         events = pygame.event.get()
@@ -186,6 +195,7 @@ def gameLoop():
                 exit()
 
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_SPACE]:
             isShooting = True
         else:
@@ -196,6 +206,7 @@ def gameLoop():
             runCycleCount += 1
             goingRight = False
             goingLeft = True
+            firstMove = False
             if runCycleCount > ((len(runImages) - 1) * 3) - 1:
                 runCycleCount = 0
             if isShooting:
@@ -213,6 +224,7 @@ def gameLoop():
             runCycleCount += 1
             goingRight = True
             goingLeft = False
+            firstMove = False
             if runCycleCount > ((len(runImages) - 1) * 3) - 1:
                 runCycleCount = 0
             if isShooting:
@@ -235,6 +247,7 @@ def gameLoop():
 
         if not jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - lastJump >= 350:
+                firstMove = False
                 lastJump = 0
                 jumping = True
         else:
@@ -267,6 +280,9 @@ def gameLoop():
         gameDisplay.fill(white)
         gameDisplay.fill(black, (0, displayHeight - 100, displayWidth, 100))
         gameDisplay.blit(currentPlayer, (x, y))
+
+        if firstMove:
+            music()
 
         pygame.display.update()
         clock.tick(FPS)
