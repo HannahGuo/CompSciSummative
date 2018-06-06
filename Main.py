@@ -13,8 +13,8 @@ lightBlue = (59, 59, 198)
 
 displayWidth = 800
 displayHeight = 600
-centerWidth = (displayWidth / 2)
-centerHeight = (displayHeight / 2)
+centerDisplayWidth = (displayWidth / 2)
+centerDisplayHeight = (displayHeight / 2)
 imageWidth = 130
 imageHeight = 130
 buttonWidth = 150
@@ -46,6 +46,7 @@ gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("Roboto")
 clock = pygame.time.Clock()
 
+
 # WIP Icon Variables
 # icon = pygame.image.load("../Roboto/images/Idle.png")
 # pygame.display.set_icon(icon)
@@ -68,13 +69,13 @@ idleImages = [pygame.image.load("../Roboto/images/Idle1.png"),
               pygame.image.load("../Roboto/images/Idle10.png")]
 
 runImages = [pygame.image.load("../Roboto/images/Run1.png"),
-              pygame.image.load("../Roboto/images/Run2.png"),
-              pygame.image.load("../Roboto/images/Run3.png"),
-              pygame.image.load("../Roboto/images/Run4.png"),
-              pygame.image.load("../Roboto/images/Run5.png"),
-              pygame.image.load("../Roboto/images/Run6.png"),
-              pygame.image.load("../Roboto/images/Run7.png"),
-              pygame.image.load("../Roboto/images/Run8.png")]
+             pygame.image.load("../Roboto/images/Run2.png"),
+             pygame.image.load("../Roboto/images/Run3.png"),
+             pygame.image.load("../Roboto/images/Run4.png"),
+             pygame.image.load("../Roboto/images/Run5.png"),
+             pygame.image.load("../Roboto/images/Run6.png"),
+             pygame.image.load("../Roboto/images/Run7.png"),
+             pygame.image.load("../Roboto/images/Run8.png")]
 
 jumpImages = [pygame.image.load("../Roboto/images/Jump1.png"),
               pygame.image.load("../Roboto/images/Jump2.png"),
@@ -96,11 +97,10 @@ runShootImages = [pygame.image.load("../Roboto/images/RunShoot1.png"),
                   pygame.image.load("../Roboto/images/RunShoot9.png")]
 
 jumpShootImages = [pygame.image.load("../Roboto/images/JumpShoot1.png"),
-                  pygame.image.load("../Roboto/images/JumpShoot2.png"),
-                  pygame.image.load("../Roboto/images/JumpShoot3.png"),
-                  pygame.image.load("../Roboto/images/JumpShoot4.png"),
-                  pygame.image.load("../Roboto/images/JumpShoot5.png")]
-
+                   pygame.image.load("../Roboto/images/JumpShoot2.png"),
+                   pygame.image.load("../Roboto/images/JumpShoot3.png"),
+                   pygame.image.load("../Roboto/images/JumpShoot4.png"),
+                   pygame.image.load("../Roboto/images/JumpShoot5.png")]
 
 # Player Images/Assignments
 rightPlayer = pygame.transform.scale(idleImages[0], (imageWidth, imageHeight))
@@ -128,25 +128,28 @@ def startScreen():
         gameDisplay.blit(screen_text, [(displayWidth / 2) - (screen_text.get_rect().width / 2),
                                        (displayHeight / 2) - (screen_text.get_rect().height / 2) - 100])
 
-        gameDisplay.fill(blue, (centerWidth - (buttonWidth / 2), centerHeight - 30, buttonWidth, buttonHeight))
-        gameDisplay.fill(blue, (centerWidth - (buttonWidth / 2), centerHeight + 50, buttonWidth, buttonHeight))
+        gameDisplay.fill(blue,
+                         (centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight - 30, buttonWidth, buttonHeight))
+        gameDisplay.fill(blue,
+                         (centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight + 50, buttonWidth, buttonHeight))
 
         cursorPos = pygame.mouse.get_pos()
         leftButtonState = pygame.mouse.get_pressed()[0]
 
-        if (centerWidth - (buttonWidth / 2)) < cursorPos[0] < centerWidth + (buttonWidth / 2) and \
-                (centerHeight - (buttonHeight / 2)) < cursorPos[1] < centerHeight + (buttonHeight / 2):
-            gameDisplay.fill(lightBlue, (centerWidth - (buttonWidth / 2), centerHeight - 30, buttonWidth, buttonHeight))
+        if (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
+                (centerDisplayHeight - (buttonHeight / 2)) < cursorPos[1] < centerDisplayHeight + (buttonHeight / 2):
+            gameDisplay.fill(lightBlue, (
+            centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight - 30, buttonWidth, buttonHeight))
             if leftButtonState:
                 return
 
-        elif (centerWidth - (buttonWidth / 2)) < cursorPos[0] < centerWidth + (buttonWidth / 2) and \
-                (centerHeight + 50 - (buttonHeight / 2)) < cursorPos[1] < centerHeight + 50 + buttonHeight:
-            gameDisplay.fill(lightBlue, (centerWidth - (buttonWidth / 2), centerHeight + 50, buttonWidth, buttonHeight))
+        elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
+                (centerDisplayHeight + buttonHeight) < cursorPos[1] < centerDisplayHeight + 50 + buttonHeight:
+            gameDisplay.fill(lightBlue, (
+            centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight + 50, buttonWidth, buttonHeight))
             if leftButtonState:
                 pygame.quit()
                 exit()
-
         drawButtonText("START", white, -30)
         drawButtonText("QUIT", white, 50)
 
@@ -156,8 +159,9 @@ def startScreen():
 def drawButtonText(text, colour, yOffset):
     displayText = buttonFont.render(text, True, colour)
 
-    gameDisplay.blit(displayText, [centerWidth - (displayText.get_rect().width / 2),
-                                   centerHeight + (buttonHeight / 2) - (displayText.get_rect().height / 2) + yOffset])
+    gameDisplay.blit(displayText, [centerDisplayWidth - (displayText.get_rect().width / 2),
+                                   centerDisplayHeight + (buttonHeight / 2) - (
+                                               displayText.get_rect().height / 2) + yOffset])
 
 
 def gameLoop():
@@ -215,7 +219,8 @@ def gameLoop():
                 runShootCycleCount += 1
                 if runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
                     runShootCycleCount = 0
-                currentPlayer = pygame.transform.scale(runShootImages[runShootCycleCount // 3], (imageWidth, imageHeight))
+                currentPlayer = pygame.transform.scale(runShootImages[runShootCycleCount // 3],
+                                                       (imageWidth, imageHeight))
             else:
                 currentPlayer = pygame.transform.scale(runImages[runCycleCount // 3], (imageWidth, imageHeight))
         else:
