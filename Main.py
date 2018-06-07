@@ -103,6 +103,9 @@ jumpShootImages = [pygame.image.load("../Roboto/images/JumpShoot1.png"),
                    pygame.image.load("../Roboto/images/JumpShoot4.png"),
                    pygame.image.load("../Roboto/images/JumpShoot5.png")]
 
+platform_1 = pygame.image.load("../Roboto/images/Platform1.png")
+platform_1 = pygame.transform.scale(platform_1, (400, 250))
+
 # Player Images/Assignments
 rightPlayer = pygame.transform.scale(idleImages[0], (imageWidth, imageHeight))
 leftPlayer = leftImageMode(rightPlayer)
@@ -113,6 +116,8 @@ idleCycleCount = 0
 runCycleCount = 0
 runShootCycleCount = 0
 jumpShootCycleCount = 0
+
+#self.rect = self.image.get_rect()
 
 
 def music():
@@ -280,6 +285,19 @@ def gameLoop():
         gameDisplay.fill(white)
         gameDisplay.fill(black, (0, displayHeight - 100, displayWidth, 100))
         gameDisplay.blit(currentPlayer, (x, y))
+        gameDisplay.blit(platform_1, (300, 400))
+        #platformer = pygame.sprite.collide_rect(currentPlayer,platform_1)
+        
+        
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        for block in block_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
+            if self.change_y > 0:
+                self.rect.bottom = block.rect.top
+            elif self.change_y < 0:
+                self.rect.top = block.rect.bottom
+
 
         if firstMove:
             music()
