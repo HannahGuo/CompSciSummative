@@ -6,10 +6,12 @@ pygame.init()
 # Color Definitions
 white = (255, 255, 255)
 black = (0, 0, 0)
+ground = (26, 20, 17)
 red = (255, 0, 0)
 green = (0, 155, 0)
 blue = (0, 0, 155)
 lightBlue = (59, 59, 198)
+grey = (73, 73, 73)
 
 displayWidth = 800
 displayHeight = 600
@@ -22,36 +24,16 @@ buttonHeight = 50
 groundHeight = displayHeight - 150
 FPS = 60
 
-# Jumping Variables
-jumping = False
-jumpCounter = 12
-jumpBound = jumpCounter
-lastJump = 0
-
-# Moving Variables
-goingLeft = False
-goingRight = True
-velocity = 5
-firstMove = True
-
-# Player Location
-x = imageWidth
-y = displayHeight - 155 - (imageHeight / 2)
-
-# Shooting Variables
-isShooting = False
-
+titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 40)
 bodyFont = pygame.font.SysFont("comicsansms", 50)
 buttonFont = pygame.font.SysFont("comicsansms", 20)
 gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("Roboto")
 clock = pygame.time.Clock()
 
-
 # WIP Icon Variables
 # icon = pygame.image.load("../Roboto/images/Idle.png")
 # pygame.display.set_icon(icon)
-
 
 def leftImageMode(player):
     return pygame.transform.flip(player, True, False)
@@ -103,16 +85,11 @@ jumpShootImages = [pygame.image.load("../Roboto/images/JumpShoot1.png"),
                    pygame.image.load("../Roboto/images/JumpShoot4.png"),
                    pygame.image.load("../Roboto/images/JumpShoot5.png")]
 
+caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
+
 # Player Images/Assignments
 rightPlayer = pygame.transform.scale(idleImages[0], (imageWidth, imageHeight))
 leftPlayer = leftImageMode(rightPlayer)
-currentPlayer = rightPlayer
-
-# Image Cycle Counters
-idleCycleCount = 0
-runCycleCount = 0
-runShootCycleCount = 0
-jumpShootCycleCount = 0
 
 
 def music():
@@ -120,6 +97,34 @@ def music():
     pygame.mixer.music.load("../Roboto/Roboto.mp3")
     pygame.mixer.music.set_volume(0.1)
     pygame.mixer.music.play(-1)
+
+
+class player(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.width = imageWidth
+        self.height = imageHeight
+        self.velocity = 5
+        self.jumping = False
+        self.isShooting = False
+        self.goingLeft = False
+        self.goingRight = True
+        self.firstMove = True
+        self.idleCycleCount = 0
+        self.runCycleCount = 0
+        self.runShootCycleCount = 0
+        self.jumpShootCycleCount = 0
+        self.goingLeft = False
+        self.goingRight = True
+        self.firstMove = True
+        self.jumpCounter = 12
+        self.jumpBound = self.jumpCounter
+        self.lastJump = 0
+        self.currentPlayer = rightPlayer
+
+
+roboto = player(imageWidth, displayHeight - 155 - (imageHeight / 2))
 
 
 def startScreen():
@@ -130,15 +135,15 @@ def startScreen():
                 pygame.quit()
                 exit()
 
-        gameDisplay.fill(white)
+        gameDisplay.blit(caveBackground, (0, 0))
 
-        screen_text = bodyFont.render("Roboto", True, blue)
+        screen_text = titleFont.render("Roboto", True, white)
         gameDisplay.blit(screen_text, [(displayWidth / 2) - (screen_text.get_rect().width / 2),
                                        (displayHeight / 2) - (screen_text.get_rect().height / 2) - 100])
 
-        gameDisplay.fill(blue,
+        gameDisplay.fill(grey,
                          (centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight - 30, buttonWidth, buttonHeight))
-        gameDisplay.fill(blue,
+        gameDisplay.fill(grey,
                          (centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight + 50, buttonWidth, buttonHeight))
 
         cursorPos = pygame.mouse.get_pos()
@@ -146,15 +151,15 @@ def startScreen():
 
         if (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
                 (centerDisplayHeight - (buttonHeight / 2)) < cursorPos[1] < centerDisplayHeight + (buttonHeight / 2):
-            gameDisplay.fill(lightBlue, (
-            centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight - 30, buttonWidth, buttonHeight))
+            gameDisplay.fill(black, (
+                centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight - 30, buttonWidth, buttonHeight))
             if leftButtonState:
                 return
 
         elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
                 (centerDisplayHeight + buttonHeight) < cursorPos[1] < centerDisplayHeight + 50 + buttonHeight:
-            gameDisplay.fill(lightBlue, (
-            centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight + 50, buttonWidth, buttonHeight))
+            gameDisplay.fill(black, (
+                centerDisplayWidth - (buttonWidth / 2), centerDisplayHeight + 50, buttonWidth, buttonHeight))
             if leftButtonState:
                 pygame.quit()
                 exit()
@@ -169,24 +174,10 @@ def drawButtonText(text, colour, yOffset):
 
     gameDisplay.blit(displayText, [centerDisplayWidth - (displayText.get_rect().width / 2),
                                    centerDisplayHeight + (buttonHeight / 2) - (
-                                               displayText.get_rect().height / 2) + yOffset])
+                                           displayText.get_rect().height / 2) + yOffset])
 
 
 def gameLoop():
-    global idleCycleCount
-    global runCycleCount
-    global runShootCycleCount
-    global jumpShootCycleCount
-    global x
-    global y
-    global goingLeft
-    global goingRight
-    global jumping
-    global jumpCounter
-    global lastJump
-    global currentPlayer
-    global firstMove
-
     while True:
         events = pygame.event.get()
         for event in events:
@@ -197,91 +188,95 @@ def gameLoop():
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_SPACE]:
-            isShooting = True
+            roboto.isShooting = True
         else:
-            isShooting = False
+            roboto.isShooting = False
 
-        if keys[pygame.K_LEFT] and (x > -30) and not keys[pygame.K_RIGHT]:
-            x -= velocity
-            runCycleCount += 1
-            goingRight = False
-            goingLeft = True
-            firstMove = False
-            if runCycleCount > ((len(runImages) - 1) * 3) - 1:
-                runCycleCount = 0
-            if isShooting:
-                runShootCycleCount += 1
-                if runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
-                    runShootCycleCount = 0
-                currentPlayer = leftImageMode(
-                    pygame.transform.scale(runShootImages[runShootCycleCount // 3], (imageWidth, imageHeight)))
+        if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
+            roboto.x -= roboto.velocity
+            roboto.runCycleCount += 1
+            roboto.goingRight = False
+            roboto.goingLeft = True
+            roboto.firstMove = False
+            if roboto.runCycleCount > ((len(runImages) - 1) * 3) - 1:
+                roboto.runCycleCount = 0
+            if roboto.isShooting:
+                roboto.runShootCycleCount += 1
+                if roboto.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
+                    roboto.runShootCycleCount = 0
+                roboto.currentPlayer = leftImageMode(
+                    pygame.transform.scale(runShootImages[roboto.runShootCycleCount // 3], (imageWidth, imageHeight)))
             else:
-                currentPlayer = leftImageMode(
-                    pygame.transform.scale(runImages[runCycleCount // 3], (imageWidth, imageHeight)))
+                roboto.currentPlayer = leftImageMode(
+                    pygame.transform.scale(runImages[roboto.runCycleCount // 3], (imageWidth, imageHeight)))
 
-        elif keys[pygame.K_RIGHT] and (x < 695) and not keys[pygame.K_LEFT]:
-            x += velocity
-            runCycleCount += 1
-            goingRight = True
-            goingLeft = False
-            firstMove = False
-            if runCycleCount > ((len(runImages) - 1) * 3) - 1:
-                runCycleCount = 0
-            if isShooting:
-                runShootCycleCount += 1
-                if runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
-                    runShootCycleCount = 0
-                currentPlayer = pygame.transform.scale(runShootImages[runShootCycleCount // 3],
-                                                       (imageWidth, imageHeight))
+        elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
+            roboto.x += roboto.velocity
+            roboto.runCycleCount += 1
+            roboto.goingRight = True
+            roboto.goingLeft = False
+            roboto.firstMove = False
+            if roboto.runCycleCount > ((len(runImages) - 1) * 3) - 1:
+                roboto.runCycleCount = 0
+            if roboto.isShooting:
+                roboto.runShootCycleCount += 1
+                if roboto.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
+                    roboto.runShootCycleCount = 0
+                roboto.currentPlayer = pygame.transform.scale(runShootImages[roboto.runShootCycleCount // 3],
+                                                              (imageWidth, imageHeight))
             else:
-                currentPlayer = pygame.transform.scale(runImages[runCycleCount // 3], (imageWidth, imageHeight))
+                roboto.currentPlayer = pygame.transform.scale(runImages[roboto.runCycleCount // 3],
+                                                              (imageWidth, imageHeight))
         else:
-            idleCycleCount += 1
-            if idleCycleCount > ((len(idleImages) - 1) * 3) - 1:
-                idleCycleCount = 0
-            if goingLeft:
-                currentPlayer = leftImageMode(
-                    pygame.transform.scale(idleImages[idleCycleCount // 3], (imageWidth, imageHeight)))
+            roboto.idleCycleCount += 1
+            if roboto.idleCycleCount > ((len(idleImages) - 1) * 3) - 1:
+                roboto.idleCycleCount = 0
+            if roboto.goingLeft:
+                roboto.currentPlayer = leftImageMode(
+                    pygame.transform.scale(idleImages[roboto.idleCycleCount // 3], (imageWidth, imageHeight)))
             else:
-                currentPlayer = pygame.transform.scale(idleImages[idleCycleCount // 3], (imageWidth, imageHeight))
+                roboto.currentPlayer = pygame.transform.scale(idleImages[roboto.idleCycleCount // 3],
+                                                              (imageWidth, imageHeight))
 
-        if not jumping:
-            if keys[pygame.K_UP] and int(round(time.time() * 1000)) - lastJump >= 350:
-                firstMove = False
-                lastJump = 0
-                jumping = True
+        if not roboto.jumping:
+            if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
+                roboto.firstMove = False
+                roboto.lastJump = 0
+                roboto.jumping = True
         else:
-            if jumpCounter >= -jumpBound:
-                y -= (jumpCounter * 2)
-                jumpCounter -= 1
-                if goingRight:
-                    if isShooting:
-                        jumpShootCycleCount += 1
-                        if jumpShootCycleCount > ((len(jumpShootImages) - 1) * 3) - 1:
-                            jumpShootCycleCount = 0
-                        currentPlayer = pygame.transform.scale(runShootImages[jumpShootCycleCount // 3],
-                                                               (imageWidth, imageHeight))
+            if roboto.jumpCounter >= -roboto.jumpBound:
+                roboto.y -= (roboto.jumpCounter * 2)
+                roboto.jumpCounter -= 1
+                if roboto.goingRight:
+                    if roboto.isShooting:
+                        roboto.jumpShootCycleCount += 1
+                        if roboto.jumpShootCycleCount > ((len(jumpShootImages) - 1) * 3) - 1:
+                            roboto.jumpShootCycleCount = 0
+                        roboto.currentPlayer = pygame.transform.scale(runShootImages[roboto.jumpShootCycleCount // 3],
+                                                                      (imageWidth, imageHeight))
                     else:
-                        currentPlayer = pygame.transform.scale(jumpImages[jumpCounter // 3], (imageWidth, imageHeight))
+                        roboto.currentPlayer = pygame.transform.scale(jumpImages[roboto.jumpCounter // 3],
+                                                                      (imageWidth, imageHeight))
                 else:
-                    if isShooting:
-                        jumpShootCycleCount += 1
-                        if jumpShootCycleCount > ((len(jumpShootImages) - 1) * 3) - 1:
-                            jumpShootCycleCount = 0
-                        currentPlayer = leftImageMode(
-                            pygame.transform.scale(runShootImages[jumpShootCycleCount // 3], (imageWidth, imageHeight)))
-                    currentPlayer = leftImageMode(
-                        pygame.transform.scale(jumpImages[jumpCounter // 3], (imageWidth, imageHeight)))
+                    if roboto.isShooting:
+                        roboto.jumpShootCycleCount += 1
+                        if roboto.jumpShootCycleCount > ((len(jumpShootImages) - 1) * 3) - 1:
+                            roboto.jumpShootCycleCount = 0
+                        roboto.currentPlayer = leftImageMode(
+                            pygame.transform.scale(runShootImages[roboto.jumpShootCycleCount // 3],
+                                                   (imageWidth, imageHeight)))
+                    roboto.currentPlayer = leftImageMode(
+                        pygame.transform.scale(jumpImages[roboto.jumpCounter // 3], (imageWidth, imageHeight)))
             else:
-                jumpCounter = jumpBound
-                jumping = False
-                lastJump = int(round(time.time() * 1000))
+                roboto.jumpCounter = roboto.jumpBound
+                roboto.jumping = False
+                roboto.lastJump = int(round(time.time() * 1000))
 
-        gameDisplay.fill(white)
-        gameDisplay.fill(black, (0, displayHeight - 100, displayWidth, 100))
-        gameDisplay.blit(currentPlayer, (x, y))
+        gameDisplay.blit(caveBackground, (0, 0))
+        gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
+        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
 
-        if firstMove:
+        if roboto.firstMove:
             music()
 
         pygame.display.update()
