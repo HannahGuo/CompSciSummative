@@ -41,9 +41,9 @@ clock = pygame.time.Clock()
 # pygame.display.set_icon(icon)
 
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
-roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2))
+roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2), gameDisplay)
 
-startScreenRobot = Player.player(displayWidth - 30, 55)
+startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
 
 def music(music):
@@ -106,6 +106,9 @@ def startScreen():
 
 def gameLoop():
     while True:
+        gameDisplay.blit(caveBackground, (0, 0))
+        gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
+
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -114,9 +117,16 @@ def gameLoop():
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and int(round(time.time() * 1000)) - roboto.lastShot >= 300:
             roboto.isShooting = True
+            roboto.lastShot = 0
+            roboto.shoot()
         else:
+            roboto.isShooting = False
+            roboto.resetShot()
+
+        if (roboto.goingRight and keys[pygame.K_LEFT]) or (roboto.goingLeft and keys[pygame.K_RIGHT]):
+            roboto.resetShot()
             roboto.isShooting = False
 
         if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
@@ -125,6 +135,9 @@ def gameLoop():
             roboto.movingAnimation("right")
         else:
             roboto.idleAnimation()
+            if not roboto.isShooting:
+                gameDisplay.blit(caveBackground, (0, 0))
+                gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
         if not roboto.jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
@@ -134,13 +147,10 @@ def gameLoop():
         else:
             roboto.jump()
 
-        gameDisplay.blit(caveBackground, (0, 0))
-        gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
-        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
-
         if roboto.firstMove:
             music(mainMusic)
 
+        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         pygame.display.update()
         clock.tick(FPS)
 
