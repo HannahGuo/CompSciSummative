@@ -46,6 +46,7 @@ roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHei
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
 
+
 def music(music):
     pygame.mixer.music.load(music)
     pygame.mixer.music.set_volume(0.1)
@@ -117,16 +118,21 @@ def gameLoop():
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_SPACE] and int(round(time.time() * 1000)) - roboto.lastShot >= 300:
+        if keys[pygame.K_SPACE]:
+            roboto.keepShooting = True
             roboto.isShooting = True
-            roboto.lastShot = 0
-            roboto.shoot()
-        else:
-            roboto.isShooting = False
-            roboto.resetShot()
+
+        if not keys[pygame.K_SPACE]:
+            roboto.keepShooting = False
 
         if (roboto.goingRight and keys[pygame.K_LEFT]) or (roboto.goingLeft and keys[pygame.K_RIGHT]):
-            roboto.resetShot()
+            roboto.resetShooting()
+            roboto.isShooting = False
+
+        if (roboto.isShooting and roboto.shootPos < roboto.shootRange) or roboto.keepShooting:
+            if int(round(time.time() * 1000)) - roboto.lastShot >= 200 or not roboto.keepShooting:
+                roboto.shoot()
+        else:
             roboto.isShooting = False
 
         if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
