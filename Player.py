@@ -103,6 +103,9 @@ class player(object):
         self.lastShot = int(round(time.time() * 1000))
         self.keepShooting = False
         self.firstShot = False
+        self.currentX = 0
+        self.currentY = 0
+        self.goingRight = not self.goingLeft
 
     def idleAnimation(self):
         if not self.isShooting:
@@ -192,17 +195,21 @@ class player(object):
             self.lastJump = int(round(time.time() * 1000))
 
     def shoot(self):
-        if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
+        if self.shootPos == 0:
+            self.currentX = self.x
+            self.currentY = self.y
+            self.goingRight = self.goingRight
+        if self.bulletCycleCount > ((len(bulletImages) - 1) * 10) - 1:
             self.bulletCycleCount = 0
         if self.shootPos < self.shootRange:
-            self.shootPos += 5
+            self.shootPos += 10
             self.bulletCycleCount += 1
             if self.goingRight:
-                self.currentBullet = pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40))
-                self.display.blit(self.currentBullet, (self.x + self.shootPos + (self.width / 2), self.y + (imageHeight / 2) - 20))
+                self.currentBullet = pygame.transform.scale(bulletImages[self.bulletCycleCount // 10], (40, 40))
+                self.display.blit(self.currentBullet, (self.currentX + self.shootPos + (self.width / 2), self.currentY + (imageHeight / 2) - 20))
             else:
-                self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40)))
-                self.display.blit(self.currentBullet, (self.x - self.shootPos, self.y + (imageHeight / 2) - 20))
+                self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 10], (40, 40)))
+                self.display.blit(self.currentBullet, (self.currentX - self.shootPos, self.currentY + (imageHeight / 2) - 20))
         else:
             self.restartShot()
 
