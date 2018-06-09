@@ -60,7 +60,6 @@ startScreenRobot.velocity = 3
 def redraw_window():
     gameDisplay.blit(caveBackground, (caveBackground1,0))
     gameDisplay.blit(caveBackground, (caveBackground2,0))
-    pygame.display.update()
 
 def music(music):
     pygame.mixer.music.load(music)
@@ -129,10 +128,7 @@ def gameLoop():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-        redraw_window()
-        clock.tick(speed)
-        caveBackground1 -= 1.4
-        caveBackground2 -= 1.4
+
         keys = pygame.key.get_pressed()
 
         if caveBackground1 < caveBackground.get_width() * -1:
@@ -147,10 +143,20 @@ def gameLoop():
 
         if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
             roboto.movingAnimation("left")
+            redraw_window()
+            clock.tick(speed)
+            caveBackground1 += 1.4
+            caveBackground2 += 1.4
         elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
+            roboto.movingAnimation("left")
+            redraw_window()
+            clock.tick(speed)
+            caveBackground1 -= 1.4
+            caveBackground2 -= 1.4
             roboto.movingAnimation("right")
         else:
             roboto.idleAnimation()
+            redraw_window()
 
         if not roboto.jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
@@ -159,6 +165,7 @@ def gameLoop():
                 roboto.jumping = True
         else:
             roboto.jump()
+            redraw_window()
 
         #gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))

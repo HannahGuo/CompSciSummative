@@ -66,7 +66,7 @@ class player(object):
         self.y = y
         self.width = imageWidth
         self.height = imageHeight
-        self.velocity = 5
+        self.velocity = 10
         self.jumping = False
         self.isShooting = False
         self.goingLeft = False

@@ -1,5 +1,7 @@
 import pygame
 
+
+
 pygame.init()
 
 platform_1 = pygame.image.load("../Roboto/images/Platform1.png")
@@ -11,4 +13,7 @@ class Platform(pygame.sprite.Sprite):
         self.image = platform_1
         self.rect = self.image.get_rect()
 
-        
+        return image
+
+
+
