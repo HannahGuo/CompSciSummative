@@ -28,9 +28,8 @@ bodyFont = pygame.font.SysFont("comicsansms", 50)
 buttonFont = pygame.font.SysFont("comicsansms", 20)
 
 pygame.mixer.init()
-startScreenMusic = "../Roboto/Roboto.mp3"
-mainMusic = "../Roboto/Blackout.mp3"
-
+startScreenMusic = "../Roboto/music/Roboto.mp3"
+mainMusic = "../Roboto/music/Blackout.mp3"
 
 gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("Roboto")
@@ -41,10 +40,11 @@ clock = pygame.time.Clock()
 # pygame.display.set_icon(icon)
 
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
-roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2))
+roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2), gameDisplay)
 
-startScreenRobot = Player.player(displayWidth - 30, 55)
+startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
+
 
 def music(music):
     pygame.mixer.music.load(music)
@@ -106,6 +106,9 @@ def startScreen():
 
 def gameLoop():
     while True:
+        gameDisplay.blit(caveBackground, (0, 0))
+        gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
+
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -115,9 +118,21 @@ def gameLoop():
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_SPACE]:
+            roboto.keepShooting = True
             roboto.isShooting = True
+
+        if not keys[pygame.K_SPACE]:
+            roboto.keepShooting = False
+
+        if (roboto.isShooting and roboto.shootPos < roboto.shootRange or not roboto.finishedShot) or \
+                roboto.keepShooting:
+            if int(round(time.time() * 1000)) - roboto.lastShot >= 200 or not roboto.keepShooting:
+                roboto.shoot()
         else:
             roboto.isShooting = False
+
+        if (roboto.goingRight and keys[pygame.K_LEFT]) or (roboto.goingLeft and keys[pygame.K_RIGHT]):
+            roboto.keepShooting = False
 
         if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
             roboto.movingAnimation("left")
@@ -125,6 +140,9 @@ def gameLoop():
             roboto.movingAnimation("right")
         else:
             roboto.idleAnimation()
+            if not roboto.isShooting:
+                gameDisplay.blit(caveBackground, (0, 0))
+                gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
         if not roboto.jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
@@ -134,13 +152,10 @@ def gameLoop():
         else:
             roboto.jump()
 
-        gameDisplay.blit(caveBackground, (0, 0))
-        gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
-        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
-
         if roboto.firstMove:
             music(mainMusic)
 
+        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         pygame.display.update()
         clock.tick(FPS)
 
