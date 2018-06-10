@@ -30,8 +30,6 @@ buttonFont = pygame.font.SysFont("comicsansms", 20)
 pygame.mixer.init()
 startScreenMusic = "../Roboto/music/Roboto.mp3"
 mainMusic = "../Roboto/music/Blackout.mp3"
-# shootingSound = "../Roboto/ShootingSound.mp3"
-
 
 gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("Roboto")
@@ -126,7 +124,8 @@ def gameLoop():
         if not keys[pygame.K_SPACE]:
             roboto.keepShooting = False
 
-        if (roboto.isShooting and roboto.shootPos < roboto.shootRange or not roboto.finishedShot) or roboto.keepShooting :
+        if (roboto.isShooting and roboto.shootPos < roboto.shootRange or not roboto.finishedShot) or \
+                roboto.keepShooting:
             if int(round(time.time() * 1000)) - roboto.lastShot >= 200 or not roboto.keepShooting:
                 roboto.shoot()
         else:

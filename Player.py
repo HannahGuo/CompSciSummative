@@ -67,6 +67,7 @@ muzzleImages = [pygame.image.load("../Roboto/images/projectiles/Muzzle1.png"),
                 pygame.image.load("../Roboto/images/projectiles/Muzzle4.png"),
                 pygame.image.load("../Roboto/images/projectiles/Muzzle5.png")]
 
+
 def leftImageMode(player):
     return pygame.transform.flip(player, True, False)
 
@@ -78,32 +79,38 @@ leftPlayer = leftImageMode(rightPlayer)
 
 class player(object):
     def __init__(self, x, y, display):
+        # Core Variables
         self.x = x
         self.y = y
         self.width = imageWidth
         self.height = imageHeight
         self.velocity = 5
+        self.currentPlayer = rightPlayer
+        self.display = display
+
+        # Player States
         self.jumping = False
         self.isShooting = False
         self.goingLeft = False
         self.goingRight = True
         self.firstMove = True
+
+        # Image Cycle Counters
         self.idleCycleCount = 0
         self.idleShootCount = 0
         self.runCycleCount = 0
         self.runShootCycleCount = 0
         self.jumpShootCycleCount = 0
-        self.goingLeft = False
-        self.goingRight = True
-        self.firstMove = True
+        self.bulletCycleCount = 0
+
+        # Jumping Variables
         self.jumpCounter = 12
         self.jumpBound = self.jumpCounter
         self.lastJump = 0
+
+        # Shooting Variables
         self.shootRange = 150
         self.shootPos = self.shootRange
-        self.currentPlayer = rightPlayer
-        self.bulletCycleCount = 0
-        self.display = display
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
         self.keepShooting = False
@@ -139,14 +146,15 @@ class player(object):
                                                             (imageWidth, imageHeight))
 
     def movingAnimation(self, direction):
+        self.firstMove = False
+        if self.runCycleCount > ((len(runImages) - 1) * 3) - 1:
+            self.runCycleCount = 0
+        self.runCycleCount += 1
+
         if direction == "left":
             self.x -= self.velocity
-            self.runCycleCount += 1
             self.goingRight = False
             self.goingLeft = True
-            self.firstMove = False
-            if self.runCycleCount > ((len(runImages) - 1) * 3) - 1:
-                self.runCycleCount = 0
             if self.isShooting:
                 self.runShootCycleCount += 1
                 if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
@@ -156,14 +164,11 @@ class player(object):
             else:
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(runImages[self.runCycleCount // 3], (imageWidth, imageHeight)))
+
         elif direction == "right":
             self.x += self.velocity
-            self.runCycleCount += 1
             self.goingRight = True
             self.goingLeft = False
-            self.firstMove = False
-            if self.runCycleCount > ((len(runImages) - 1) * 3) - 1:
-                self.runCycleCount = 0
             if self.isShooting:
                 self.runShootCycleCount += 1
                 if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
@@ -209,6 +214,11 @@ class player(object):
             self.currentY = self.y
             self.currentDirection = "right" if self.goingRight else "left"
             self.finishedShot = False
+            shootingSound = "../Roboto/music/Blaster.wav"
+            shootingSoundEffect = pygame.mixer.Sound(shootingSound)
+            shootingSoundEffect.set_volume(0.2)
+            shootingSoundEffect.play()
+            pygame.mixer.init()
         if self.shootPos < self.shootRange:
             if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                 self.bulletCycleCount = 0
@@ -216,7 +226,8 @@ class player(object):
             self.bulletCycleCount += 1
             if self.currentDirection == "right":
                 self.currentBullet = pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40))
-                self.display.blit(self.currentBullet, (self.currentX + self.shootPos + (self.width / 2) + 20, self.currentY + (imageHeight / 2) - 20))
+                self.display.blit(self.currentBullet, (self.currentX + self.shootPos + (self.width / 2) + 20,
+                                                       self.currentY + (imageHeight / 2) - 20))
             else:
                 self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40)))
                 self.display.blit(self.currentBullet, (self.currentX - self.shootPos, self.currentY + (imageHeight / 2) - 20))
@@ -238,24 +249,17 @@ class player(object):
 
     def resetShooting(self):
         self.bulletCycleCount = 0
-        self.shootPos = self.shootRange
+        self.finishedShot = True
         self.isShooting = False
         self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
-        self.finishedShot = True
+        self.shootPos = self.shootRange
 
     def restartShot(self):
         self.bulletCycleCount = 0
+        self.finishedShot = True
+        self.hasShot = False
+        self.isShooting = False
+        self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
         self.shootPos = 0
-        self.lastShot = int(round(time.time() * 1000))
-        self.hasShot = False
-        self.finishedShot = True
-        self.isShooting = False
-
-    # def shootNoise(self):
-    #     pygame.mixer.init()
-    #     shootingSound = "../Roboto/music/ShootingSound.mp3"
-    #     pygame.mixer.music.load(shootingSound)
-    #     pygame.mixer.music.set_volume(0.5)
-    #     pygame.mixer.music.play()
