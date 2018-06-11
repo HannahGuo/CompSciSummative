@@ -91,8 +91,7 @@ class player(object):
         # Player States
         self.jumping = False
         self.isShooting = False
-        self.goingLeft = False
-        self.goingRight = True
+        self.direction = "right"
         self.firstMove = True
 
         # Image Cycle Counters
@@ -109,7 +108,7 @@ class player(object):
         self.lastJump = 0
 
         # Shooting Variables
-        self.shootRange = 150
+        self.shootRange = 140
         self.shootPos = self.shootRange
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
@@ -117,18 +116,20 @@ class player(object):
         self.firstShot = False
         self.currentX = 0
         self.currentY = 0
-        self.currentDirection = "right"
+        self.currentDirection = self.direction
         self.muzzleImagesCount = 0
         self.muzzle = muzzleImages[0]
         self.hasShot = False
         self.finishedShot = True
+        self.bulletX = 0
+        self.bulletY = 0
 
     def idleAnimation(self):
         if not self.isShooting and not self.keepShooting:
             self.idleCycleCount += 1
             if self.idleCycleCount > ((len(idleImages) - 1) * 3) - 1:
                 self.idleCycleCount = 0
-            if self.goingLeft:
+            if self.direction == "left":
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(idleImages[self.idleCycleCount // 3], (imageWidth, imageHeight)))
             else:
@@ -138,7 +139,7 @@ class player(object):
             self.idleShootCount += 1
             if self.idleShootCount > ((len(idleShootImages) - 1) * 3) - 1:
                 self.idleShootCount = 0
-            if self.goingLeft:
+            if self.direction == "left":
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(idleShootImages[self.idleShootCount // 3], (imageWidth, imageHeight)))
             else:
@@ -153,8 +154,7 @@ class player(object):
 
         if direction == "left":
             self.x -= self.velocity
-            self.goingRight = False
-            self.goingLeft = True
+            self.direction = direction
             if self.isShooting:
                 self.runShootCycleCount += 1
                 if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
@@ -167,8 +167,7 @@ class player(object):
 
         elif direction == "right":
             self.x += self.velocity
-            self.goingRight = True
-            self.goingLeft = False
+            self.direction = direction
             if self.isShooting:
                 self.runShootCycleCount += 1
                 if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
@@ -183,7 +182,7 @@ class player(object):
         if self.jumpCounter >= -self.jumpBound:
             self.y -= (self.jumpCounter * 2)
             self.jumpCounter -= 1
-            if self.goingRight:
+            if self.direction == "right":
                 if self.isShooting:
                     self.jumpShootCycleCount += 1
                     if self.jumpShootCycleCount > ((len(jumpShootImages) - 1) * 3) - 1:
@@ -212,40 +211,47 @@ class player(object):
         if self.shootPos == 0:
             self.currentX = self.x
             self.currentY = self.y
-            self.currentDirection = "right" if self.goingRight else "left"
+            self.currentDirection = self.direction
             self.finishedShot = False
             shootingSound = "../Roboto/music/Blaster.wav"
             shootingSoundEffect = pygame.mixer.Sound(shootingSound)
             shootingSoundEffect.set_volume(0.2)
             shootingSoundEffect.play()
-            pygame.mixer.init()
         if self.shootPos < self.shootRange:
-            if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
-                self.bulletCycleCount = 0
-            self.shootPos += 5
-            self.bulletCycleCount += 1
-            if self.currentDirection == "right":
-                self.currentBullet = pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40))
-                self.display.blit(self.currentBullet, (self.currentX + self.shootPos + (self.width / 2) + 20,
-                                                       self.currentY + (imageHeight / 2) - 20))
-            else:
-                self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40)))
-                self.display.blit(self.currentBullet, (self.currentX - self.shootPos, self.currentY + (imageHeight / 2) - 20))
-        else:
-            if self.muzzleImagesCount < ((len(muzzleImages) - 1) * 3) - 1 and not self.finishedShot:
-                self.muzzleImagesCount += 1
-                self.shootPos += 5
+            if 20 < self.bulletX < 750:
+                print(self.bulletX)
+                if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
+                    self.bulletCycleCount = 0
+                self.shootPos += 7
+                self.bulletCycleCount += 1
                 if self.currentDirection == "right":
-                    self.muzzle = pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50))
-                    self.display.blit(self.muzzle, (
-                        self.currentX + self.shootPos + (self.width / 2) + 20, self.currentY + (imageHeight / 2) - 20))
+                    self.currentBullet = pygame.transform.scale(bulletImages[self.bulletCycleCount // 5], (40, 40))
+                    self.bulletX = self.currentX + self.shootPos + (self.width / 2) + 20
                 else:
-                    self.muzzle = leftImageMode(
-                        pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50)))
-                    self.display.blit(self.muzzle,
-                                      (self.currentX - self.shootPos, self.currentY + (imageHeight / 2) - 20))
+                    self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5],
+                                                                              (40, 40)))
+                    self.bulletX = self.currentX - self.shootPos
+                self.bulletY = self.currentY + (imageHeight / 2) - 20
+                self.display.blit(self.currentBullet, (self.bulletX, self.bulletY))
             else:
-                self.restartShot()
+                self.endShot()
+        else:
+            self.endShot()
+
+    def endShot(self):
+        if self.muzzleImagesCount < ((len(muzzleImages) - 1) * 3) - 1 and not self.finishedShot:
+            self.muzzleImagesCount += 1
+            self.shootPos += 5
+            if self.currentDirection == "right":
+                self.muzzle = pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50))
+                self.bulletX = self.currentX + self.shootPos + (self.width / 2) + 20
+            else:
+                self.muzzle = leftImageMode(pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50)))
+                self.bulletX = self.currentX - self.shootPos
+            self.bulletY = self.currentY + (imageHeight / 2) - 20
+            self.display.blit(self.muzzle, (self.bulletX, self.bulletY))
+        else:
+            self.restartShot()
 
     def resetShooting(self):
         self.bulletCycleCount = 0
