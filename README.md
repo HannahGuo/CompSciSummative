@@ -1,4 +1,17 @@
 # Roboto
 Python Game for Comp Sci 2018
-WE WILL GET A 100
-Discount Skyrim
+
+###To-Do List:
+
+**Hannah**:
+* Power-Ups
+* Coins/Gems/Whatever Sprites Online
+* UI (Pause, Help)
+
+**Manav**:
+* Platforms (have fun buddy)
+* Collisions
+
+**Whoever**:
+* Scrolling Background
+* Score Counter
