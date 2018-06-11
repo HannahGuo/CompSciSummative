@@ -84,15 +84,13 @@ class player(object):
         self.y = y
         self.width = imageWidth
         self.height = imageHeight
-<<<<<<< HEAD
-        self.velocity = 10
-=======
+
         self.velocity = 5
         self.currentPlayer = rightPlayer
         self.display = display
 
         # Player States
->>>>>>> master
+
         self.jumping = False
         self.isShooting = False
         self.direction = "right"
@@ -210,8 +208,7 @@ class player(object):
             self.jumpCounter = self.jumpBound
             self.jumping = False
             self.lastJump = int(round(time.time() * 1000))
-<<<<<<< HEAD
-=======
+
 
     def shoot(self):
         if self.shootPos == 0:
@@ -274,4 +271,4 @@ class player(object):
         self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
         self.shootPos = 0
->>>>>>> master
+

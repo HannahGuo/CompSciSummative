@@ -43,7 +43,7 @@ clock = pygame.time.Clock()
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
 roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2), gameDisplay)
 
-<<<<<<< HEAD
+
 platform_1 = pygame.image.load("../Roboto/images/Platform1.png")
 platform_1 = pygame.transform.scale(platform_1, (400, 150))
 
@@ -53,7 +53,7 @@ caveBackground1 = 0
 
 caveBackground2 = caveBackground.get_width()
 
-startScreenRobot = Player.player(displayWidth - 30, 55)
+startScreenRobot = Player.player(displayWidth - 30, 55,gameDisplay)
 startScreenRobot.velocity = 3
 
 def redraw_window():
@@ -62,14 +62,6 @@ def redraw_window():
 
 def music(music):
     pygame.mixer.music.load(music)
-=======
-startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
-startScreenRobot.velocity = 3
-
-
-def music(soundtrack):
-    pygame.mixer.music.load(soundtrack)
->>>>>>> master
     pygame.mixer.music.set_volume(0.1)
     pygame.mixer.music.play(-1)
 
@@ -176,13 +168,11 @@ def gameLoop():
             caveBackground2 -= 1.4
         else:
             roboto.idleAnimation()
-<<<<<<< HEAD
-            redraw_window()
-=======
+
             if not roboto.isShooting:
                 gameDisplay.blit(caveBackground, (0, 0))
                 gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
->>>>>>> master
+
 
         if not roboto.jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
@@ -193,14 +183,13 @@ def gameLoop():
             roboto.jump()
             redraw_window()
 
-<<<<<<< HEAD
+
         #gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         gameDisplay.blit(platform_1, (450,displayHeight-150))
         
-=======
->>>>>>> master
+
         if roboto.firstMove:
             music(mainMusic)
 
