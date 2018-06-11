@@ -49,16 +49,18 @@ platform_1 = pygame.transform.scale(platform_1, (400, 150))
 
 
 #add backgroundrunning
-caveBackground1 = 0
+caveBackgroundRunning = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight-100))
+caveBackground1 = -30
 
-caveBackground2 = caveBackground.get_width()
+
+caveBackground2 = caveBackground.get_width() -30
 
 startScreenRobot = Player.player(displayWidth - 30, 55,gameDisplay)
 startScreenRobot.velocity = 3
 
 def redraw_window():
-    gameDisplay.blit(caveBackground, (caveBackground1,0))
-    gameDisplay.blit(caveBackground, (caveBackground2,0))
+    gameDisplay.blit(caveBackgroundRunning, (caveBackground1,0))
+    gameDisplay.blit(caveBackgroundRunning, (caveBackground2,0))
 
 def music(music):
     pygame.mixer.music.load(music)
@@ -122,7 +124,7 @@ def gameLoop():
     global caveBackground1
     global caveBackground2
     while True:
-        gameDisplay.blit(caveBackground, (0, 0))
+        gameDisplay.blit(caveBackgroundRunning, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
         events = pygame.event.get()
@@ -133,10 +135,10 @@ def gameLoop():
 
         keys = pygame.key.get_pressed()
 
-        if caveBackground1 < caveBackground.get_width() * -1:
-            caveBackground1 =  caveBackground.get_width()
-        if caveBackground2 < caveBackground.get_width() * -1:
-            caveBackground2 =  caveBackground.get_width()
+        if caveBackground1 < caveBackgroundRunning.get_width() * -1:
+            caveBackground1 =  caveBackgroundRunning.get_width()
+        if caveBackground2 < caveBackgroundRunning.get_width() * -1:
+            caveBackground2 =  caveBackgroundRunning.get_width()
 
         if keys[pygame.K_SPACE]:
             roboto.keepShooting = True
@@ -170,7 +172,7 @@ def gameLoop():
             roboto.idleAnimation()
 
             if not roboto.isShooting:
-                gameDisplay.blit(caveBackground, (0, 0))
+                #gameDisplay.blit(caveBackground, (0, 0))
                 gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
 
