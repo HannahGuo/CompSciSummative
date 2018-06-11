@@ -49,17 +49,21 @@ platform_1 = pygame.transform.scale(platform_1, (400, 150))
 
 
 #add backgroundrunning
+
+caveBackgroundRunning = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight-100))
 caveBackground1 = -30
 
 caveBackground2 = caveBackground.get_width() - 30
+
+
 
 startScreenRobot = Player.player(displayWidth - 30, 55)
 startScreenRobot.velocity = 3
 
 
 def redraw_window():
-    gameDisplay.blit(caveBackground, (caveBackground1,0))
-    gameDisplay.blit(caveBackground, (caveBackground2,0))
+    gameDisplay.blit(caveBackgroundRunning, (caveBackground1,0))
+    gameDisplay.blit(caveBackgroundRunning, (caveBackground2,0))
 
 
 def music(music):
@@ -137,10 +141,10 @@ def gameLoop():
 
         keys = pygame.key.get_pressed()
 
-        if caveBackground1 < caveBackground.get_width() * -1:
-            caveBackground1 = caveBackground.get_width() - 30
-        if caveBackground2 < caveBackground.get_width() * -1:
-            caveBackground2 = caveBackground.get_width() - 30
+        if caveBackground1 < caveBackgroundRunning.get_width() * -1:
+            caveBackground1 = caveBackgroundRunning.get_width() - 30
+        if caveBackground2 < caveBackgroundRunning.get_width() * -1:
+            caveBackground2 = caveBackgroundRunning.get_width() - 30
 
         if keys[pygame.K_SPACE]:
             roboto.isShooting = True
