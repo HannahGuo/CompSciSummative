@@ -49,22 +49,27 @@ platform_1 = pygame.transform.scale(platform_1, (400, 150))
 
 
 #add backgroundrunning
-caveBackground1 = 0
+caveBackground1 = -30
 
-caveBackground2 = caveBackground.get_width()
+caveBackground2 = caveBackground.get_width() - 30
 
 startScreenRobot = Player.player(displayWidth - 30, 55)
 startScreenRobot.velocity = 3
+
 
 def redraw_window():
     gameDisplay.blit(caveBackground, (caveBackground1,0))
     gameDisplay.blit(caveBackground, (caveBackground2,0))
 
+
 def music(music):
     pygame.mixer.music.load(music)
     pygame.mixer.music.set_volume(0.1)
     pygame.mixer.music.play(-1)
-
+    
+def running_window():
+    gameDisplay = pygame.display.set_mode((displayWidth+695, displayHeight))
+    
 
 def startScreen():
     music(startScreenMusic)
@@ -122,6 +127,8 @@ def gameLoop():
     global caveBackground1
     global caveBackground2
     while True:
+        redraw_window()
+
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -131,9 +138,9 @@ def gameLoop():
         keys = pygame.key.get_pressed()
 
         if caveBackground1 < caveBackground.get_width() * -1:
-            caveBackground1 =  caveBackground.get_width()
+            caveBackground1 = caveBackground.get_width() - 30
         if caveBackground2 < caveBackground.get_width() * -1:
-            caveBackground2 =  caveBackground.get_width()
+            caveBackground2 = caveBackground.get_width() - 30
 
         if keys[pygame.K_SPACE]:
             roboto.isShooting = True
@@ -141,18 +148,18 @@ def gameLoop():
             roboto.isShooting = False
 
         if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
-            roboto.movingAnimation("left")
-            redraw_window()
             caveBackground1 += 1.4
             caveBackground2 += 1.4
+            roboto.movingAnimation("left")
         elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
-            roboto.movingAnimation("right")
-            redraw_window()
+        #elif keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             caveBackground1 -= 1.4
             caveBackground2 -= 1.4
+            roboto.movingAnimation("right")
+            #if roboto.x < 695:
+                #running_window()
         else:
             roboto.idleAnimation()
-            redraw_window()
 
         if not roboto.jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
@@ -161,13 +168,12 @@ def gameLoop():
                 roboto.jumping = True
         else:
             roboto.jump()
-            redraw_window()
 
         #gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         gameDisplay.blit(platform_1, (450,displayHeight-150))
-        
+
         if roboto.firstMove:
             music(mainMusic)
 
