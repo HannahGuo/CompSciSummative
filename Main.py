@@ -50,10 +50,10 @@ platform_1 = pygame.transform.scale(platform_1, (400, 150))
 
 #add backgroundrunning
 caveBackgroundRunning = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight-100))
-caveBackground1 = -30
+caveBackground1 = - 30
 
 
-caveBackground2 = caveBackground.get_width() -30
+caveBackground2 = caveBackground.get_width() + 30
 
 startScreenRobot = Player.player(displayWidth - 30, 55,gameDisplay)
 startScreenRobot.velocity = 3
@@ -61,6 +61,7 @@ startScreenRobot.velocity = 3
 def redraw_window():
     gameDisplay.blit(caveBackgroundRunning, (caveBackground1,0))
     gameDisplay.blit(caveBackgroundRunning, (caveBackground2,0))
+    
 
 
 def music(music):
@@ -78,7 +79,7 @@ def startScreen():
                 pygame.quit()
                 exit()
 
-        gameDisplay.blit(caveBackground, (0, 0))
+        gameDisplay.blit(caveBackground, (0,0))
         startScreenRobot.movingAnimation("right")
 
         screen_text = titleFont.render("Roboto", True, white)
@@ -125,7 +126,7 @@ def gameLoop():
     global caveBackground1
     global caveBackground2
     while True:
-        #gameDisplay.blit(caveBackgroundRunning, (0, 0))
+        redraw_window()
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
         events = pygame.event.get()
@@ -179,8 +180,10 @@ def gameLoop():
                 roboto.firstMove = False
                 roboto.lastJump = 0
                 roboto.jumping = True
+                redraw_window()
         else:
             roboto.jump()
+            redraw_window()
 
         #gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
