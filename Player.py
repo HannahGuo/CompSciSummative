@@ -84,6 +84,7 @@ class player(object):
         self.y = y
         self.width = imageWidth
         self.height = imageHeight
+<<<<<<< HEAD
 
         self.velocity = 5
         self.currentPlayer = rightPlayer
@@ -91,6 +92,9 @@ class player(object):
 
         # Player States
 
+=======
+        self.velocity = 5
+>>>>>>> parent of 3888f6f... movement tied to player
         self.jumping = False
         self.isShooting = False
         self.direction = "right"
@@ -207,6 +211,7 @@ class player(object):
         else:
             self.jumpCounter = self.jumpBound
             self.jumping = False
+<<<<<<< HEAD
             self.lastJump = int(round(time.time() * 1000))
 
 
@@ -272,3 +277,6 @@ class player(object):
         self.muzzleImagesCount = 0
         self.shootPos = 0
 
+=======
+            self.lastJump = int(round(time.time() * 1000))
+>>>>>>> parent of 3888f6f... movement tied to player

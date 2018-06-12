@@ -42,7 +42,7 @@ clock = pygame.time.Clock()
 # pygame.display.set_icon(icon)
 
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
-roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2))
+roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2),gameDisplay)
 
 platform_1 = pygame.image.load("../Roboto/images/Platform1.png")
 platform_1 = pygame.transform.scale(platform_1, (400, 150))
@@ -53,7 +53,7 @@ caveBackground1 = -30
 
 caveBackground2 = caveBackground.get_width() - 30
 
-startScreenRobot = Player.player(displayWidth - 30, 55)
+startScreenRobot = Player.player(displayWidth - 30, 55,gameDisplay)
 startScreenRobot.velocity = 3
 
 
