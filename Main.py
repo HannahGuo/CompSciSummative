@@ -11,9 +11,10 @@ ground = (26, 20, 17)
 red = (255, 0, 0)
 lightRed = (244, 66, 66)
 green = (0, 155, 0)
-blue = (0, 0, 155)
-lightBlue = (59, 59, 198)
 grey = (73, 73, 73)
+darkYellow = (255, 204, 0)
+yellow = (255, 255, 0)
+darkGrey = (51, 51, 51)
 
 displayWidth = 800
 displayHeight = 600
@@ -22,6 +23,7 @@ centerDisplayHeight = (displayHeight / 2)
 buttonWidth = 150
 buttonHeight = 50
 groundHeight = displayHeight - 150
+resume = False
 FPS = 60
 
 titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 35)
@@ -66,8 +68,7 @@ def startScreen():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+                quitProgram()
 
         gameDisplay.blit(caveBackground, (0, 0))
         startScreenRobot.movingAnimation("right")
@@ -81,33 +82,30 @@ def startScreen():
                                     centerDisplayHeight)
 
         helpButton = Button.Button(grey, black, gameDisplay, "HELP", centerDisplayWidth - (buttonWidth / 2),
-                                    centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
-                                    centerDisplayHeight)
+                                   centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
+                                   centerDisplayHeight)
 
         quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
                                    centerDisplayHeight + 130, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
                                    centerDisplayHeight)
 
-        cursorPos = pygame.mouse.get_pos()
-        leftButtonState = pygame.mouse.get_pressed()[0]
-
-        if (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
-                (centerDisplayHeight - (buttonHeight / 2)) < cursorPos[1] < centerDisplayHeight + (buttonHeight / 2):
+        if (centerDisplayWidth - (buttonWidth / 2)) < getCursorPos()[0] < centerDisplayWidth + (buttonWidth / 2) and \
+                (centerDisplayHeight - (buttonHeight / 2)) < getCursorPos()[1] < \
+                centerDisplayHeight + (buttonHeight / 2):
             startButton.hover()
-            if leftButtonState:
+            if isLeftMouseClicked():
                 gameLoop()
 
-        elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
-                (centerDisplayHeight + buttonHeight) < cursorPos[1] < centerDisplayHeight + 50 + buttonHeight:
+        elif (centerDisplayWidth - (buttonWidth / 2)) < getCursorPos()[0] < centerDisplayWidth + (buttonWidth / 2) and \
+                (centerDisplayHeight + buttonHeight) < getCursorPos()[1] < centerDisplayHeight + 50 + buttonHeight:
             helpButton.hover()
-            if leftButtonState:
+            if isLeftMouseClicked():
                 helpScreen()
-        elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
-                (centerDisplayHeight + 130) < cursorPos[1] < centerDisplayHeight + 130 + buttonHeight:
+        elif (centerDisplayWidth - (buttonWidth / 2)) < getCursorPos()[0] < centerDisplayWidth + (buttonWidth / 2) and \
+                (centerDisplayHeight + 130) < getCursorPos()[1] < centerDisplayHeight + 130 + buttonHeight:
             quitButton.hover()
-            if leftButtonState:
-                pygame.quit()
-                exit()
+            if isLeftMouseClicked():
+                quitProgram()
 
         if startScreenRobot.x > displayWidth + 1400:
             startScreenRobot.x = -(startScreenRobot.width / 2)
@@ -118,20 +116,20 @@ def startScreen():
 
         gameDisplay.blit(startScreenRobot.currentPlayer, (startScreenRobot.x, startScreenRobot.y))
 
-        credits = subSubTitleFont.render("Created by Hannah Guo & Manav Shardha", True, white)
-        gameDisplay.blit(credits, [(displayWidth / 2) - (credits.get_rect().width / 2), displayHeight - 50])
+        creators = subSubTitleFont.render("Created by Hannah Guo & Manav Shardha", True, white)
+        gameDisplay.blit(creators, [(displayWidth / 2) - (creators.get_rect().width / 2), displayHeight - 50])
 
         pygame.display.update()
 
 
 def helpScreen():
+    global resume
     xMargin = 100
     while True:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+                quitProgram()
 
         gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (50, 50, displayWidth - 100, displayHeight - 100))
@@ -161,18 +159,17 @@ def helpScreen():
 
         xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black, buttonFont)
 
-        cursorPos = pygame.mouse.get_pos()
-        leftButtonState = pygame.mouse.get_pressed()[0]
-
-        if xButton.left < cursorPos[0] < xButton.left + xButton.size and xButton.top < cursorPos[1] < xButton.top + xButton.size:
+        if xButton.left < getCursorPos()[0] < xButton.left + xButton.size and xButton.top < getCursorPos()[1] < \
+                xButton.top + xButton.size:
             xButton.hover()
-            if leftButtonState:
+            if isLeftMouseClicked():
                 startScreen()
 
         pygame.display.update()
 
 
 def gameLoop():
+    global resume
     while True:
         gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
@@ -180,8 +177,7 @@ def gameLoop():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+                quitProgram()
 
         keys = pygame.key.get_pressed()
 
@@ -223,17 +219,56 @@ def gameLoop():
 
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
 
-        pauseButton = SquareIcon.SquareIcon(white, lightBlue, gameDisplay, "||", displayWidth - 50, 20, 25, blue, pauseFont)
+        pauseButton = SquareIcon.SquareIcon(darkYellow, yellow, gameDisplay, "| |", displayWidth - 50, 20, 30, darkGrey,
+                                            pauseFont)
 
-        cursorPos = pygame.mouse.get_pos()
-        leftButtonState = pygame.mouse.get_pressed()[0]
-        if pauseButton.left < cursorPos[0] < pauseButton.left + pauseButton.size and pauseButton.top < cursorPos[1] < pauseButton.top + pauseButton.size:
+        if pauseButton.left < getCursorPos()[0] < pauseButton.left + pauseButton.size and \
+                pauseButton.top < getCursorPos()[1] < pauseButton.top + pauseButton.size:
             pauseButton.hover()
-            if leftButtonState:
-                startScreen()
-        
+            if isLeftMouseClicked():
+                if not resume:
+                    pause()
+                else:
+                    resume = True
+            else:
+                resume = False
+
         pygame.display.update()
         clock.tick(FPS)
+
+
+def pause():
+    global resume
+    while True:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                quitProgram()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                return
+
+        pauseText1 = titleFont.render("Game Paused", True, white)
+        gameDisplay.blit(pauseText1, [centerDisplayWidth - (pauseText1.get_rect().width / 2),
+                                      centerDisplayHeight - (pauseText1.get_rect().height / 2)])
+
+        pauseText2 = subTitleFont.render("Click anywhere to resume", True, white)
+        gameDisplay.blit(pauseText2, [centerDisplayWidth - (pauseText2.get_rect().width / 2),
+                                      centerDisplayHeight - (pauseText2.get_rect().height / 2) + 40])
+        resume = True
+        pygame.display.update()
+
+
+def quitProgram():
+    pygame.quit()
+    exit()
+
+
+def getCursorPos():
+    return pygame.mouse.get_pos()
+
+
+def isLeftMouseClicked():
+    return pygame.mouse.get_pressed()[0]
 
 
 music(startScreenMusic)
