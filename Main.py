@@ -26,8 +26,10 @@ FPS = 60
 
 titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 35)
 subTitleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 25)
+subSubTitleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 15)
 bodyFont = pygame.font.SysFont("comicsansms", 20)
 buttonFont = pygame.font.SysFont("comicsansms", 20)
+pauseFont = pygame.font.Font("../Roboto/Passion_One/PassionOne-Bold.ttf", 20)
 
 pygame.mixer.init()
 startScreenMusic = "../Roboto/music/Roboto.mp3"
@@ -60,7 +62,6 @@ def music(soundtrack):
 
 
 def startScreen():
-    music(startScreenMusic)
     while True:
         events = pygame.event.get()
         for event in events:
@@ -101,9 +102,8 @@ def startScreen():
             helpButton.hover()
             if leftButtonState:
                 helpScreen()
-
         elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
-                (centerDisplayHeight + buttonHeight) < cursorPos[1] < centerDisplayHeight + 130 + buttonHeight:
+                (centerDisplayHeight + 130) < cursorPos[1] < centerDisplayHeight + 130 + buttonHeight:
             quitButton.hover()
             if leftButtonState:
                 pygame.quit()
@@ -117,6 +117,9 @@ def startScreen():
             startScreenRobot.isShooting = False
 
         gameDisplay.blit(startScreenRobot.currentPlayer, (startScreenRobot.x, startScreenRobot.y))
+
+        credits = subSubTitleFont.render("Created by Hannah Guo & Manav Shardha", True, white)
+        gameDisplay.blit(credits, [(displayWidth / 2) - (credits.get_rect().width / 2), displayHeight - 50])
 
         pygame.display.update()
 
@@ -156,7 +159,7 @@ def helpScreen():
         gameDisplay.blit(upKey, [150, displayHeight - 220])
         gameDisplay.blit(spaceBar, [90, displayHeight - 150])
 
-        xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black)
+        xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black, buttonFont)
 
         cursorPos = pygame.mouse.get_pos()
         leftButtonState = pygame.mouse.get_pressed()[0]
@@ -206,9 +209,6 @@ def gameLoop():
             roboto.movingAnimation("right")
         else:
             roboto.idleAnimation()
-            if not roboto.isShooting:
-                gameDisplay.blit(caveBackground, (0, 0))
-                gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
         if not roboto.jumping:
             if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
@@ -222,8 +222,19 @@ def gameLoop():
             music(mainMusic)
 
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
+
+        pauseButton = SquareIcon.SquareIcon(white, lightBlue, gameDisplay, "||", displayWidth - 50, 20, 25, blue, pauseFont)
+
+        cursorPos = pygame.mouse.get_pos()
+        leftButtonState = pygame.mouse.get_pressed()[0]
+        if pauseButton.left < cursorPos[0] < pauseButton.left + pauseButton.size and pauseButton.top < cursorPos[1] < pauseButton.top + pauseButton.size:
+            pauseButton.hover()
+            if leftButtonState:
+                startScreen()
+        
         pygame.display.update()
         clock.tick(FPS)
 
 
+music(startScreenMusic)
 startScreen()
