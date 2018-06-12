@@ -218,7 +218,7 @@ class player(object):
             shootingSoundEffect.set_volume(0.2)
             shootingSoundEffect.play()
         if self.shootPos < self.shootRange:
-            if 20 < self.bulletX < 750:
+            if 30 < self.bulletX < 750:
                 if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                     self.bulletCycleCount = 0
                 self.shootPos += 7

@@ -1,6 +1,6 @@
 import pygame
 import time
-from Roboto import Player, Button
+from Roboto import Player, Button, SquareIcon
 
 pygame.init()
 
@@ -9,6 +9,7 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 ground = (26, 20, 17)
 red = (255, 0, 0)
+lightRed = (244, 66, 66)
 green = (0, 155, 0)
 blue = (0, 0, 155)
 lightBlue = (59, 59, 198)
@@ -23,8 +24,9 @@ buttonHeight = 50
 groundHeight = displayHeight - 150
 FPS = 60
 
-titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 40)
-bodyFont = pygame.font.SysFont("comicsansms", 50)
+titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 35)
+subTitleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 25)
+bodyFont = pygame.font.SysFont("comicsansms", 20)
 buttonFont = pygame.font.SysFont("comicsansms", 20)
 
 pygame.mixer.init()
@@ -40,6 +42,11 @@ clock = pygame.time.Clock()
 # pygame.display.set_icon(icon)
 
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
+leftKey = pygame.transform.scale(pygame.image.load("../Roboto/images/LeftKey.png"), (50, 50))
+rightKey = pygame.transform.scale(pygame.image.load("../Roboto/images/RightKey.png"), (50, 50))
+upKey = pygame.transform.scale(pygame.image.load("../Roboto/images/UpKey.png"), (50, 50))
+spaceBar = pygame.transform.scale(pygame.image.load("../Roboto/images/Space.png"), (180, 60))
+
 roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2), gameDisplay)
 
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
@@ -72,8 +79,12 @@ def startScreen():
                                     centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                                     centerDisplayHeight)
 
+        helpButton = Button.Button(grey, black, gameDisplay, "HELP", centerDisplayWidth - (buttonWidth / 2),
+                                    centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
+                                    centerDisplayHeight)
+
         quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
-                                   centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
+                                   centerDisplayHeight + 130, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
                                    centerDisplayHeight)
 
         cursorPos = pygame.mouse.get_pos()
@@ -83,10 +94,16 @@ def startScreen():
                 (centerDisplayHeight - (buttonHeight / 2)) < cursorPos[1] < centerDisplayHeight + (buttonHeight / 2):
             startButton.hover()
             if leftButtonState:
-                return
+                gameLoop()
 
         elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
                 (centerDisplayHeight + buttonHeight) < cursorPos[1] < centerDisplayHeight + 50 + buttonHeight:
+            helpButton.hover()
+            if leftButtonState:
+                helpScreen()
+
+        elif (centerDisplayWidth - (buttonWidth / 2)) < cursorPos[0] < centerDisplayWidth + (buttonWidth / 2) and \
+                (centerDisplayHeight + buttonHeight) < cursorPos[1] < centerDisplayHeight + 130 + buttonHeight:
             quitButton.hover()
             if leftButtonState:
                 pygame.quit()
@@ -100,6 +117,54 @@ def startScreen():
             startScreenRobot.isShooting = False
 
         gameDisplay.blit(startScreenRobot.currentPlayer, (startScreenRobot.x, startScreenRobot.y))
+
+        pygame.display.update()
+
+
+def helpScreen():
+    xMargin = 100
+    while True:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        gameDisplay.blit(caveBackground, (0, 0))
+        gameDisplay.fill(ground, (50, 50, displayWidth - 100, displayHeight - 100))
+
+        titleText = titleFont.render("Help", True, white)
+        helpText1 = bodyFont.render("You play as Roboto, the robot. Roboto has been created to test the ", True, white)
+        helpText2 = bodyFont.render("mettle of the Cavern. Survive as long as you can, and earn the most", True, white)
+        helpText3 = bodyFont.render("points by shooting monsters and dodging obstacles!", True, white)
+        helpText4 = subTitleFont.render("Controls", True, white)
+        helpText5 = bodyFont.render("Left and Right Arrow Keys to Move", True, white)
+        helpText6 = bodyFont.render("Up Arrow Key to Jump", True, white)
+        helpText7 = bodyFont.render("Space Bar to Shoot", True, white)
+
+        gameDisplay.blit(titleText, [xMargin, 100])
+        gameDisplay.blit(helpText1, [xMargin, 150])
+        gameDisplay.blit(helpText2, [xMargin, 180])
+        gameDisplay.blit(helpText3, [xMargin, 210])
+        gameDisplay.blit(helpText4, [xMargin, 260])
+        gameDisplay.blit(helpText5, [300, displayHeight - 280])
+        gameDisplay.blit(helpText6, [300, displayHeight - 215])
+        gameDisplay.blit(helpText7, [300, displayHeight - 140])
+
+        gameDisplay.blit(leftKey, [120, displayHeight - 290])
+        gameDisplay.blit(rightKey, [180, displayHeight - 290])
+        gameDisplay.blit(upKey, [150, displayHeight - 220])
+        gameDisplay.blit(spaceBar, [90, displayHeight - 150])
+
+        xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black)
+
+        cursorPos = pygame.mouse.get_pos()
+        leftButtonState = pygame.mouse.get_pressed()[0]
+
+        if xButton.left < cursorPos[0] < xButton.left + xButton.size and xButton.top < cursorPos[1] < xButton.top + xButton.size:
+            xButton.hover()
+            if leftButtonState:
+                startScreen()
 
         pygame.display.update()
 
@@ -161,6 +226,4 @@ def gameLoop():
         clock.tick(FPS)
 
 
-while True:
-    startScreen()
-    gameLoop()
+startScreen()
