@@ -162,12 +162,10 @@ def gameLoop():
 
         if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
             roboto.movingAnimation("left")
-            redraw_window()
             caveBackground1 += 1.4
             caveBackground2 += 1.4
         elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
             roboto.movingAnimation("right")
-            redraw_window()
             caveBackground1 -= 1.4
             caveBackground2 -= 1.4
         else:
@@ -183,7 +181,6 @@ def gameLoop():
                 redraw_window()
         else:
             roboto.jump()
-            redraw_window()
 
         #gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
