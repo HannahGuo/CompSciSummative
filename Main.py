@@ -23,7 +23,6 @@ centerDisplayHeight = (displayHeight / 2)
 buttonWidth = 150
 buttonHeight = 50
 groundHeight = displayHeight - 150
-resume = False
 FPS = 60
 
 titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 35)
@@ -55,6 +54,8 @@ roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHei
 
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
+
+resume = False
 
 
 def music(soundtrack):
@@ -216,6 +217,11 @@ def gameLoop():
 
         if roboto.firstMove:
             music(mainMusic)
+
+        # if keys[pygame.K_p]:
+        #     roboto.ripRoboto()
+        # else:
+        #     roboto.deadCycleCount = 0
 
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
 

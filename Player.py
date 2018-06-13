@@ -67,6 +67,17 @@ muzzleImages = [pygame.image.load("../Roboto/images/projectiles/Muzzle1.png"),
                 pygame.image.load("../Roboto/images/projectiles/Muzzle4.png"),
                 pygame.image.load("../Roboto/images/projectiles/Muzzle5.png")]
 
+deadImages = [pygame.image.load("../Roboto/images/robot/Dead1.png"),
+              pygame.image.load("../Roboto/images/robot/Dead2.png"),
+              pygame.image.load("../Roboto/images/robot/Dead3.png"),
+              pygame.image.load("../Roboto/images/robot/Dead4.png"),
+              pygame.image.load("../Roboto/images/robot/Dead5.png"),
+              pygame.image.load("../Roboto/images/robot/Dead6.png"),
+              pygame.image.load("../Roboto/images/robot/Dead7.png"),
+              pygame.image.load("../Roboto/images/robot/Dead8.png"),
+              pygame.image.load("../Roboto/images/robot/Dead9.png"),
+              pygame.image.load("../Roboto/images/robot/Dead10.png")]
+
 
 def leftImageMode(player):
     return pygame.transform.flip(player, True, False)
@@ -101,6 +112,7 @@ class player(object):
         self.runShootCycleCount = 0
         self.jumpShootCycleCount = 0
         self.bulletCycleCount = 0
+        self.deadCycleCount = 0
 
         # Jumping Variables
         self.jumpCounter = 12
@@ -268,3 +280,10 @@ class player(object):
         self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
         self.shootPos = 0
+        
+    def ripRoboto(self):
+        if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1:
+            self.deadCycleCount += 1
+            self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (imageWidth, imageHeight))
+        else:
+            self.deadCycleCount = 0
