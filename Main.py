@@ -50,10 +50,10 @@ platform_1 = pygame.transform.scale(platform_1, (400, 150))
 
 #add backgroundrunning
 caveBackgroundRunning = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight-100))
-caveBackground1 = - 30
+caveBackground1 = - 50
 
 
-caveBackground2 = caveBackground.get_width() + 30
+caveBackground2 = caveBackground.get_width() - 50
 
 startScreenRobot = Player.player(displayWidth - 30, 55,gameDisplay)
 startScreenRobot.velocity = 3
