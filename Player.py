@@ -1,9 +1,6 @@
 import pygame
 import time
 
-imageWidth = 130
-imageHeight = 130
-
 # Image Assignments
 idleImages = [pygame.image.load("../Roboto/images/robot/Idle1.png"),
               pygame.image.load("../Roboto/images/robot/Idle2.png"),
@@ -55,17 +52,17 @@ jumpShootImages = [pygame.image.load("../Roboto/images/robot/JumpShoot1.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot4.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot5.png")]
 
-bulletImages = [pygame.image.load("../Roboto/images/projectiles/Bullet1.png"),
-                pygame.image.load("../Roboto/images/projectiles/Bullet2.png"),
-                pygame.image.load("../Roboto/images/projectiles/Bullet3.png"),
-                pygame.image.load("../Roboto/images/projectiles/Bullet4.png"),
-                pygame.image.load("../Roboto/images/projectiles/Bullet5.png")]
+bulletImages = [pygame.image.load("../Roboto/images/projectiles/PlayerBullet1.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerBullet2.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerBullet3.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerBullet4.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerBullet5.png")]
 
-muzzleImages = [pygame.image.load("../Roboto/images/projectiles/Muzzle1.png"),
-                pygame.image.load("../Roboto/images/projectiles/Muzzle2.png"),
-                pygame.image.load("../Roboto/images/projectiles/Muzzle3.png"),
-                pygame.image.load("../Roboto/images/projectiles/Muzzle4.png"),
-                pygame.image.load("../Roboto/images/projectiles/Muzzle5.png")]
+muzzleImages = [pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle1.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle2.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle3.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle4.png"),
+                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle5.png")]
 
 deadImages = [pygame.image.load("../Roboto/images/robot/Dead1.png"),
               pygame.image.load("../Roboto/images/robot/Dead2.png"),
@@ -79,12 +76,12 @@ deadImages = [pygame.image.load("../Roboto/images/robot/Dead1.png"),
               pygame.image.load("../Roboto/images/robot/Dead10.png")]
 
 
-def leftImageMode(player):
-    return pygame.transform.flip(player, True, False)
+def leftImageMode(image):
+    return pygame.transform.flip(image, True, False)
 
 
 # Player Images/Assignments
-rightPlayer = pygame.transform.scale(idleImages[0], (imageWidth, imageHeight))
+rightPlayer = pygame.transform.scale(idleImages[0], (130, 130))
 leftPlayer = leftImageMode(rightPlayer)
 
 
@@ -93,8 +90,8 @@ class player(object):
         # Core Variables
         self.x = x
         self.y = y
-        self.width = imageWidth
-        self.height = imageHeight
+        self.width = 130
+        self.height = 130
         self.velocity = 5
         self.currentPlayer = rightPlayer
         self.display = display
@@ -143,20 +140,20 @@ class player(object):
                 self.idleCycleCount = 0
             if self.direction == "left":
                 self.currentPlayer = leftImageMode(
-                    pygame.transform.scale(idleImages[self.idleCycleCount // 3], (imageWidth, imageHeight)))
+                    pygame.transform.scale(idleImages[self.idleCycleCount // 3], (self.width, self.height)))
             else:
                 self.currentPlayer = pygame.transform.scale(idleImages[self.idleCycleCount // 3],
-                                                            (imageWidth, imageHeight))
+                                                            (self.width, self.height))
         else:
             self.idleShootCount += 1
             if self.idleShootCount > ((len(idleShootImages) - 1) * 3) - 1:
                 self.idleShootCount = 0
             if self.direction == "left":
                 self.currentPlayer = leftImageMode(
-                    pygame.transform.scale(idleShootImages[self.idleShootCount // 3], (imageWidth, imageHeight)))
+                    pygame.transform.scale(idleShootImages[self.idleShootCount // 3], (self.width, self.height)))
             else:
                 self.currentPlayer = pygame.transform.scale(idleShootImages[self.idleShootCount // 3],
-                                                            (imageWidth, imageHeight))
+                                                            (self.width, self.height))
 
     def movingAnimation(self, direction):
         self.firstMove = False
@@ -172,10 +169,10 @@ class player(object):
                 if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
                     self.runShootCycleCount = 0
                 self.currentPlayer = leftImageMode(
-                    pygame.transform.scale(runShootImages[self.runShootCycleCount // 3], (imageWidth, imageHeight)))
+                    pygame.transform.scale(runShootImages[self.runShootCycleCount // 3], (self.width, self.height)))
             else:
                 self.currentPlayer = leftImageMode(
-                    pygame.transform.scale(runImages[self.runCycleCount // 3], (imageWidth, imageHeight)))
+                    pygame.transform.scale(runImages[self.runCycleCount // 3], (self.width, self.height)))
 
         elif direction == "right":
             self.x += self.velocity
@@ -185,10 +182,10 @@ class player(object):
                 if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
                     self.runShootCycleCount = 0
                 self.currentPlayer = pygame.transform.scale(runShootImages[self.runShootCycleCount // 3],
-                                                            (imageWidth, imageHeight))
+                                                            (self.width, self.height))
             else:
                 self.currentPlayer = pygame.transform.scale(runImages[self.runCycleCount // 3],
-                                                            (imageWidth, imageHeight))
+                                                            (self.width, self.height))
 
     def jump(self):
         if self.jumpCounter >= -self.jumpBound:
@@ -200,10 +197,10 @@ class player(object):
                     if self.jumpShootCycleCount > ((len(jumpShootImages) - 1) * 3) - 1:
                         self.jumpShootCycleCount = 0
                     self.currentPlayer = pygame.transform.scale(runShootImages[self.jumpShootCycleCount // 3],
-                                                                (imageWidth, imageHeight))
+                                                                (self.width, self.height))
                 else:
                     self.currentPlayer = pygame.transform.scale(jumpImages[self.jumpCounter // 3],
-                                                                (imageWidth, imageHeight))
+                                                                (self.width, self.height))
             else:
                 if self.isShooting:
                     self.jumpShootCycleCount += 1
@@ -211,13 +208,20 @@ class player(object):
                         self.jumpShootCycleCount = 0
                     self.currentPlayer = leftImageMode(
                         pygame.transform.scale(runShootImages[self.jumpShootCycleCount // 3],
-                                               (imageWidth, imageHeight)))
+                                               (self.width, self.height)))
                 self.currentPlayer = leftImageMode(
-                    pygame.transform.scale(jumpImages[self.jumpCounter // 3], (imageWidth, imageHeight)))
+                    pygame.transform.scale(jumpImages[self.jumpCounter // 3], (self.width, self.height)))
         else:
             self.jumpCounter = self.jumpBound
             self.jumping = False
             self.lastJump = int(round(time.time() * 1000))
+
+    @staticmethod
+    def playShotSound():
+        shootingSound = "../Roboto/music/Blaster.wav"
+        shootingSoundEffect = pygame.mixer.Sound(shootingSound)
+        shootingSoundEffect.set_volume(0.2)
+        shootingSoundEffect.play()
 
     def shoot(self):
         if self.shootPos == 0:
@@ -225,10 +229,7 @@ class player(object):
             self.currentY = self.y
             self.currentDirection = self.direction
             self.finishedShot = False
-            shootingSound = "../Roboto/music/Blaster.wav"
-            shootingSoundEffect = pygame.mixer.Sound(shootingSound)
-            shootingSoundEffect.set_volume(0.2)
-            shootingSoundEffect.play()
+            self.playShotSound()
         if self.shootPos < self.shootRange:
             if 30 < self.bulletX < 750:
                 if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
@@ -242,7 +243,7 @@ class player(object):
                     self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5],
                                                                               (40, 40)))
                     self.bulletX = self.currentX - self.shootPos
-                self.bulletY = self.currentY + (imageHeight / 2) - 20
+                self.bulletY = self.currentY + (self.height / 2) - 20
                 self.display.blit(self.currentBullet, (self.bulletX, self.bulletY))
             else:
                 self.endShot()
@@ -259,7 +260,7 @@ class player(object):
             else:
                 self.muzzle = leftImageMode(pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50)))
                 self.bulletX = self.currentX - self.shootPos
-            self.bulletY = self.currentY + (imageHeight / 2) - 20
+            self.bulletY = self.currentY + (self.height / 2) - 20
             self.display.blit(self.muzzle, (self.bulletX, self.bulletY))
         else:
             self.restartShot()
@@ -284,6 +285,6 @@ class player(object):
     def ripRoboto(self):
         if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1:
             self.deadCycleCount += 1
-            self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (imageWidth, imageHeight))
+            self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
         else:
             self.deadCycleCount = 0

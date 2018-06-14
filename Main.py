@@ -1,8 +1,9 @@
 import os
 import pygame
 import time
+import random
 
-from Roboto import Player, Button, SquareIcon
+from Roboto import Player, Button, SquareIcon, EnemyRobot
 
 pygame.init()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -52,7 +53,8 @@ rightKey = pygame.transform.scale(pygame.image.load("../Roboto/images/RightKey.p
 upKey = pygame.transform.scale(pygame.image.load("../Roboto/images/UpKey.png"), (50, 50))
 spaceBar = pygame.transform.scale(pygame.image.load("../Roboto/images/Space.png"), (180, 60))
 
-roboto = Player.player(Player.imageWidth, displayHeight - 155 - (Player.imageHeight / 2), gameDisplay)
+roboto = Player.player(130, displayHeight - 155 - (130 / 2), gameDisplay)
+enemy = EnemyRobot.enemy(130 - 50, displayHeight - 155 - (130 / 2), gameDisplay)
 
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
@@ -229,6 +231,15 @@ def gameLoop():
         # else:
         #     roboto.deadCycleCount = 0
 
+        if int(round(time.time() * 1000)) - enemy.lastShot >= enemy.randomInterval:
+            enemy.shoot()
+            enemy.isShooting = True
+        else:
+            enemy.isShooting = False
+
+        enemy.idleAnimation()
+
+        gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
 
         pauseButton = SquareIcon.SquareIcon(darkYellow, yellow, gameDisplay, "| |", displayWidth - 50, 20, 30, darkGrey,

@@ -1,6 +1,3 @@
-import pygame
-
-
 class Button(object):
     def __init__(self, colour, hoverColour, display, text, left, top, width, height, textColour, offset, centerWidth,
                  centerHeight, font):
