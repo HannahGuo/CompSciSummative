@@ -1,6 +1,7 @@
 import pygame
 import time
 import Player, Button
+from Platforms import saww,spikee
 #import platforms
 
 pygame.init()
@@ -61,6 +62,8 @@ startScreenRobot.velocity = 3
 def redraw_window():
     gameDisplay.blit(caveBackgroundRunning, (caveBackground1,0))
     gameDisplay.blit(caveBackgroundRunning, (caveBackground2,0))
+    
+    pygame.display.update()
     
 
 
@@ -129,11 +132,22 @@ def gameLoop():
         redraw_window()
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
+        for objectt in objects:
+            objectt.x -= 1.4
+            if objectt.x < objectt.width * -1:
+                objects.pop(objects.index(objectt))
+
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == USEREVENT+2:
+                r = ranom.randrange(0,2)
+                if r == 0:
+                    objects.append(saw,810,310,64,164)
+                else:
+                    objects.append(spike,810,0,48,320)
         
         keys = pygame.key.get_pressed()
 
@@ -190,10 +204,11 @@ def gameLoop():
 
         if roboto.firstMove:
             music(mainMusic)
-
+        #saw()
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         pygame.display.update()
         clock.tick(FPS)
+
 
 def level_one():
     pass    
@@ -202,3 +217,4 @@ def level_one():
 while True:
     startScreen()
     gameLoop()
+    
