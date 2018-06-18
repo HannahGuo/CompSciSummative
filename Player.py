@@ -85,7 +85,7 @@ rightPlayer = pygame.transform.scale(idleImages[0], (130, 130))
 leftPlayer = leftImageMode(rightPlayer)
 
 
-class player(object):
+class player:
     def __init__(self, x, y, display):
         # Core Variables
         self.x = x
@@ -95,7 +95,7 @@ class player(object):
         self.velocity = 6
         self.currentPlayer = rightPlayer
         self.display = display
-        self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
+        self.playerBounds = [self.x + 30, self.x + 85, self.y + 15, self.y + 120]
         self.hasRestarted = False
 
         # Player States
@@ -261,7 +261,6 @@ class player(object):
     def endShot(self):
         if self.muzzleImagesCount < ((len(muzzleImages) - 1) * 3) - 1 and not self.finishedShot:
             self.muzzleImagesCount += 1
-            self.shootPos += 5
             if self.currentDirection == "right":
                 self.muzzle = pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50))
                 self.bulletX = self.currentX + self.shootPos + (self.width / 2) + 20
@@ -293,7 +292,7 @@ class player(object):
 
     def updateBounds(self):
         if self.direction == "right":
-            self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
+            self.playerBounds = [self.x + 30, self.x + 85, self.y + 15, self.y + 120]
         else:
             self.playerBounds = [self.x + 100, self.x + 40, self.y + 15, self.y + 120]
 
@@ -312,9 +311,11 @@ class player(object):
             self.y = 600 - 155 - (130 / 2)
 
             if self.direction == "right":
-                self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
+                self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8],
+                                                            (self.width, self.height))
             else:
-                self.currentPlayer = leftImageMode(pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height)))
+                self.currentPlayer = leftImageMode(pygame.transform.scale(deadImages[self.deadCycleCount // 8],
+                                                                          (self.width, self.height)))
         elif not pronounceDead:
             self.isDead = True
 

@@ -51,7 +51,7 @@ def leftImageMode(image):
 leftPlayer = leftImageMode(pygame.transform.scale(idleImages[0], (130, 130)))
 
 
-class enemy(pygame.sprite.Sprite):
+class enemy:
     def __init__(self, x, y, display):
         # Core Variables
         self.x = x
@@ -78,19 +78,18 @@ class enemy(pygame.sprite.Sprite):
         self.shootPos = 0
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
-        self.keepShooting = False
         self.firstShot = False
         self.muzzleImagesCount = 0
         self.muzzle = muzzleImages[0]
         self.hasShot = False
         self.finishedShot = True
         self.bulletX = 0
-        self.bulletY = 0
+        self.bulletY = self.y + (self.height / 2) - 20
         self.randomInterval = random.randint(200, 800)
         self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
 
     def idleAnimation(self):
-        if not self.isShooting and not self.keepShooting:
+        if not self.isShooting:
             self.idleCycleCount += 1
             if self.idleCycleCount > ((len(idleImages) - 1) * 3) - 1:
                 self.idleCycleCount = 0
@@ -107,7 +106,7 @@ class enemy(pygame.sprite.Sprite):
         self.isShooting = True
         self.updateBulletBounds()
         if self.shootPos == 0:
-            self.bulletBounds = [0, 0, 0, 0]
+            self.resetBulletBounds()
             self.finishedShot = False
         if self.shootPos < self.shootRange and 30 < self.bulletX < 750:
             if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
@@ -117,19 +116,16 @@ class enemy(pygame.sprite.Sprite):
             self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5],
                                                                       (40, 40)))
             self.bulletX = self.x - self.shootPos
-            self.bulletY = self.y + (self.height / 2) - 20
             self.display.blit(self.currentBullet, (self.bulletX, self.bulletY))
         else:
-            self.bulletBounds = [0, 0, 0, 0]
+            self.resetBulletBounds()
             self.endShot()
 
     def endShot(self):
         if self.muzzleImagesCount < ((len(muzzleImages) - 1) * 3) - 1 and not self.finishedShot:
             self.muzzleImagesCount += 1
-            self.shootPos += 5
             self.muzzle = leftImageMode(pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50)))
             self.bulletX = self.x - self.shootPos
-            self.bulletY = self.y + (self.height / 2) - 20
             self.display.blit(self.muzzle, (self.bulletX, self.bulletY))
         else:
             self.resetShooting()
@@ -155,3 +151,6 @@ class enemy(pygame.sprite.Sprite):
 
     def updateBulletBounds(self):
         self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
+
+    def resetBulletBounds(self):
+        self.bulletBounds = [0, 0, 0, 0]

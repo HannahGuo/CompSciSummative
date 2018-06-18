@@ -44,9 +44,8 @@ gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("Roboto")
 clock = pygame.time.Clock()
 
-# WIP Icon Variables
-# icon = pygame.image.load("../Roboto/images/Idle.png")
-# pygame.display.set_icon(icon)
+icon = pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png")
+pygame.display.set_icon(icon)
 
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight))
 leftKey = pygame.transform.scale(pygame.image.load("../Roboto/images/LeftKey.png"), (50, 50))
@@ -60,9 +59,22 @@ enemy = EnemyRobot.enemy(displayWidth - 150, displayHeight - 155 - (130 / 2), ga
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
 
+showHit = False
+hitTimer = 0
+addScore = False
 musicStart = False
 justReset = False
 score = 0
+
+highScore = 0
+try:
+    with open('score.dat', 'rb') as file:
+        # highScore = 0
+        highScore = pickle.load(file)
+except:
+    highScore = 0
+    with open('score.dat', 'wb') as file:
+        pickle.dump(highScore, file)
 
 startButton = Button.Button(grey, black, gameDisplay, "START", centerDisplayWidth - (buttonWidth / 2),
                             centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
@@ -83,16 +95,6 @@ resumeButton = Button.Button(grey, black, gameDisplay, "RESUME", centerDisplayWi
 homeButton = Button.Button(grey, black, gameDisplay, "HOME", centerDisplayWidth - (buttonWidth / 2),
                            centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
-
-highScore = 0
-try:
-    with open('score.dat', 'rb') as file:
-        # highScore = 0
-        highScore = pickle.load(file)
-except:
-    highScore = 0
-    with open('score.dat', 'wb') as file:
-        pickle.dump(highScore, file)
 
 
 def music(soundtrack):
@@ -121,17 +123,14 @@ def startScreen():
         quitButton.showButton()
 
         if not justReset:
-            if startButton.isHovered(getCursorPos()) and startButton.isShown:
+            if startButton.isHovered(getCursorPos()):
                 if isLeftMouseClicked():
-                    startButton.isShown = False
                     gameLoop()
-            elif helpButton.isHovered(getCursorPos()) and helpButton.isShown:
-                if isLeftMouseClicked() and helpButton.isShown:
-                    helpButton.isShown = False
-                    helpScreen("start")
-            elif quitButton.isHovered(getCursorPos()) and quitButton.isShown:
+            elif helpButton.isHovered(getCursorPos()):
                 if isLeftMouseClicked():
-                    quitButton.isShown = False
+                    helpScreen("start")
+            elif quitButton.isHovered(getCursorPos()):
+                if isLeftMouseClicked():
                     quitProgram()
         elif justReset and not isLeftMouseClicked():
             justReset = False
@@ -204,7 +203,9 @@ def gameLoop():
     global musicStart
     global score
     global highScore
-    addScore = False
+    global addScore
+    global showHit
+    global hitTimer
     while True:
         roboto.hasRestarted = False
         gameDisplay.blit(caveBackground, (0, 0))
@@ -272,8 +273,9 @@ def gameLoop():
             if isLeftMouseClicked():
                 pause()
 
-        if checkCollision(roboto.playerBounds[0], roboto.playerBounds[1], roboto.playerBounds[2], roboto.playerBounds[3],
-                          enemy.bulletBounds[0], enemy.bulletBounds[1], enemy.bulletBounds[2], enemy.bulletBounds[3]):
+        if checkCollision(roboto.playerBounds[0], roboto.playerBounds[1], roboto.playerBounds[2],
+                          roboto.playerBounds[3], enemy.bulletBounds[0], enemy.bulletBounds[1], enemy.bulletBounds[2],
+                          enemy.bulletBounds[3]):
             roboto.gotShot = True
             roboto.resetShooting()
 
@@ -282,19 +284,24 @@ def gameLoop():
 
         while roboto.isDead:
             if highScore < score:
-                with open('score.dat', 'rb') as file:
-                    highScore = pickle.load(file)
-                with open('score.dat', 'wb') as file:
-                    pickle.dump(score, file)
+                with open('score.dat', 'rb') as fileName:
+                    highScore = pickle.load(fileName)
+                with open('score.dat', 'wb') as fileName:
+                    pickle.dump(score, fileName)
             gameOver()
 
         if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
-                          roboto.bulletBounds[0], roboto.bulletBounds[1], roboto.bulletBounds[2], roboto.bulletBounds[3]) and addScore:
-            screen_text = pygame.font.SysFont("comicsansms", 20).render("HIT", True, red)
-            gameDisplay.blit(screen_text, (enemy.x, enemy.y))
+                          roboto.bulletBounds[0], roboto.bulletBounds[1], roboto.bulletBounds[2],
+                          roboto.bulletBounds[3]) and addScore:
+            showHit = True
+            hitTimer = int(round(time.time() * 1000))
             score += 1
             addScore = False
             roboto.endShot()
+
+        if showHit and int(round(time.time() * 1000)) - hitTimer <= 400:
+            screen_text = pygame.font.SysFont("comicsansms", 20).render("HIT", True, red)
+            gameDisplay.blit(screen_text, (enemy.x, enemy.y))
 
         enemy.idleAnimation()
         gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
@@ -322,17 +329,14 @@ def pause():
         helpButton.showButton()
         quitButton.showButton()
 
-        if resumeButton.isHovered(getCursorPos()) and resumeButton.isShown:
+        if resumeButton.isHovered(getCursorPos()):
             if isLeftMouseClicked():
-                resumeButton.isShown = False
                 gameLoop()
-        elif helpButton.isHovered(getCursorPos()) and helpButton.isShown:
+        elif helpButton.isHovered(getCursorPos()):
             if isLeftMouseClicked():
-                helpButton.isShown = False
                 helpScreen("pause")
-        elif quitButton.isHovered(getCursorPos()) and quitButton.isShown:
+        elif quitButton.isHovered(getCursorPos()):
             if isLeftMouseClicked():
-                quitButton.isShown = False
                 quitProgram()
 
         pygame.display.update()
@@ -355,18 +359,13 @@ def gameOver():
             resetGame()
             startScreen()
 
-    gameOver = titleFont.render("Game Over", True, white)
-    gameDisplay.blit(gameOver, [centerDisplayWidth - (gameOver.get_rect().width / 2),
-                                centerDisplayHeight - (gameOver.get_rect().height / 2)])
+    gameOverText = titleFont.render("Game Over", True, white)
+    gameDisplay.blit(gameOverText, [centerDisplayWidth - (gameOverText.get_rect().width / 2),
+                                    centerDisplayHeight - (gameOverText.get_rect().height / 2)])
 
     clickText = titleFont.render("Click anywhere to restart.", True, white)
     gameDisplay.blit(clickText, [centerDisplayWidth - (clickText.get_rect().width / 2),
                                  centerDisplayHeight - (clickText.get_rect().height / 2) + 50])
-
-    startButton.isShown = False
-    resumeButton.isShown = False
-    quitButton.isShown = False
-    helpButton.isShown = False
 
     pygame.display.update()
 
