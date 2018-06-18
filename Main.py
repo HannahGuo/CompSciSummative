@@ -288,22 +288,23 @@ def gameLoop():
                 with open('score.dat', 'rb') as fileName:
                     highScore = pickle.load(fileName)
                 with open('score.dat', 'wb') as fileName:
-                    pickle.dump(score, fileName)
+                    pickle.dump(0, fileName)
             gameOver()
 
         if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
                           roboto.bulletBounds[0], roboto.bulletBounds[1], roboto.bulletBounds[2],
                           roboto.bulletBounds[3]) and addScore:
+            roboto.endShot()
             showHit = True
             hitTimer = int(round(time.time() * 1000))
             score += 1
             addScore = False
-            roboto.endShot()
 
         if showHit and int(round(time.time() * 1000)) - hitTimer <= 400:
             screen_text = defaultFont.render("HIT", True, red)
             gameDisplay.blit(screen_text, (enemy.x, enemy.y))
 
+        print(enemy.playerBounds, getCursorPos())
         enemy.idleAnimation()
         gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))

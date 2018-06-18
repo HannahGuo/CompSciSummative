@@ -72,7 +72,7 @@ class enemy:
 
         # Shooting Variables
         self.shootRange = random.randint(150, 350)
-        self.shotVelocity = random.randint(6, 16)
+        self.shotVelocity = random.randint(6, 14)
         self.shootPos = 0
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
@@ -83,7 +83,7 @@ class enemy:
         self.finishedShot = True
         self.bulletX = 0
         self.bulletY = self.y + (self.height / 2) - 20
-        self.randomInterval = random.randint(200, 800)
+        self.randomInterval = random.randint(300, 2000)
         self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY + 8]
 
     def idleAnimation(self):
@@ -134,10 +134,10 @@ class enemy:
         self.hasShot = False
         self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
-        self.randomInterval = random.randint(100, 2500)
+        self.randomInterval = random.randint(300, 2000)
         self.shootPos = 0
         self.shootRange = random.randint(150, 350)
-        self.shotVelocity = random.randint(6, 16)
+        self.shotVelocity = random.randint(6, 14)
         self.resetBulletBounds()
 
     def updateBulletBounds(self):

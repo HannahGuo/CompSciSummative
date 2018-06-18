@@ -237,6 +237,9 @@ class player:
             self.currentDirection = self.direction
             self.finishedShot = False
             self.playShotSound()
+            self.resetBulletBounds()
+        else:
+            self.updateBulletBounds()
         if self.shootPos < self.shootRange:
             if 30 < self.bulletX < 700:
                 if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
@@ -252,7 +255,6 @@ class player:
                     self.bulletX = self.currentX - self.shootPos
                 self.bulletY = self.currentY + (self.height / 2) - 20
                 self.display.blit(self.currentBullet, (self.bulletX, self.bulletY))
-                self.updateBulletBounds()
             else:
                 self.endShot()
         else:
