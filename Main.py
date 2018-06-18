@@ -195,6 +195,8 @@ def helpScreen(lastScreen):
 
 def gameLoop():
     global musicStart
+    global score
+    addScore = False
     while True:
         roboto.hasRestarted = False
         gameDisplay.blit(caveBackground, (0, 0))
@@ -210,6 +212,7 @@ def gameLoop():
         if keys[pygame.K_SPACE]:
             roboto.keepShooting = True
             roboto.isShooting = True
+            addScore = True
 
         if not keys[pygame.K_SPACE]:
             roboto.keepShooting = False
@@ -241,15 +244,15 @@ def gameLoop():
             else:
                 roboto.jump()
 
+            if int(round(time.time() * 1000)) - enemy.lastShot >= enemy.randomInterval:
+                enemy.shoot()
+                enemy.isShooting = True
+            else:
+                enemy.isShooting = False
+
         if roboto.firstMove and not musicStart:
             music(mainMusic)
             musicStart = True
-
-        if int(round(time.time() * 1000)) - enemy.lastShot >= enemy.randomInterval:
-            enemy.shoot()
-            enemy.isShooting = True
-        else:
-            enemy.isShooting = False
 
         pauseButton = SquareIcon.SquareIcon(darkYellow, yellow, gameDisplay, "| |", displayWidth - 50, 20, 30, darkGrey,
                                             pauseFont)
@@ -263,6 +266,7 @@ def gameLoop():
         if checkCollision(roboto.playerBounds[0], roboto.playerBounds[1], roboto.playerBounds[2], roboto.playerBounds[3],
                           enemy.bulletBounds[0], enemy.bulletBounds[1], enemy.bulletBounds[2], enemy.bulletBounds[3]):
             roboto.gotShot = True
+            roboto.resetShooting()
 
         if roboto.gotShot:
             roboto.ripRoboto(roboto.hasRestarted)
@@ -270,9 +274,19 @@ def gameLoop():
         while roboto.isDead:
             gameOver()
 
+        if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
+                          roboto.bulletBounds[0], roboto.bulletBounds[1], roboto.bulletBounds[2], roboto.bulletBounds[3]) and addScore:
+            screen_text = pygame.font.SysFont("comicsansms", 20).render("HIT", True, red)
+            gameDisplay.blit(screen_text, (enemy.x, enemy.y))
+
+            score += 1
+            addScore = False
+            roboto.endShot()
+
         enemy.idleAnimation()
         gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
+        showScores(score, 50)
         pygame.display.update()
         clock.tick(FPS)
 
@@ -323,6 +337,8 @@ def gameOver():
         if event.type == pygame.MOUSEBUTTONDOWN:
             roboto.hasRestarted = True
             roboto.resetRoboto()
+            enemy.resetShooting()
+            resetGame()
             startScreen()
 
     gameOver = titleFont.render("Game Over", True, white)
@@ -337,8 +353,6 @@ def gameOver():
     resumeButton.isShown = False
     quitButton.isShown = False
     helpButton.isShown = False
-
-    print(helpButton.isShown)
 
     pygame.display.update()
 
@@ -366,7 +380,21 @@ def checkCollisionX(minX1, maxX1, minX2, maxX2):
 
 def resetGame():
     global roboto
+    global score
     roboto = Player.player(20, displayHeight - 155 - (130 / 2), gameDisplay)
+    score = 0
+
+
+def showScores(score, new):
+    screen_text = pygame.font.SysFont("comicsansms", 20).render("Score: " + str(score), True, white)
+    gameDisplay.blit(screen_text, (20, 20))
+
+    # high_score = pygame.font.SysFont("comicsansms", 15).render("High Score: " + str(highScore), True, black)
+
+    # if new:
+    #     high_score = pygame.font.SysFont("comicsansms", 20).render("New High Score!", True, red)
+    #
+    # gameDisplay.blit(high_score, (50, 50))
 
 
 music(startScreenMusic)

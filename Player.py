@@ -136,6 +136,7 @@ class player(object):
         self.finishedShot = True
         self.bulletX = 0
         self.bulletY = 0
+        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
 
     def idleAnimation(self):
         if not self.isShooting and not self.keepShooting:
@@ -251,6 +252,7 @@ class player(object):
                     self.bulletX = self.currentX - self.shootPos
                 self.bulletY = self.currentY + (self.height / 2) - 20
                 self.display.blit(self.currentBullet, (self.bulletX, self.bulletY))
+                self.updateBulletBounds()
             else:
                 self.endShot()
         else:
@@ -287,12 +289,22 @@ class player(object):
         self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
         self.shootPos = 0
+        self.updateBulletBounds()
 
     def updateBounds(self):
         if self.direction == "right":
             self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
         else:
             self.playerBounds = [self.x + 100, self.x + 40, self.y + 15, self.y + 120]
+
+    def updateBulletBounds(self):
+        if self.direction == "right":
+            self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
+        else:
+            self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
+
+    def resetBulletBounds(self):
+        self.bulletBounds = [0, 0, 0, 0]
 
     def ripRoboto(self, pronounceDead):
         if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1 and self.gotShot:
@@ -310,8 +322,6 @@ class player(object):
         self.isDead = False
         self.gotShot = False
         self.deadCycleCount = 0
-        self.x = 20
-        self.y = 600 - 155 - (130 / 2)
         self.hasRestarted = True
         self.updateBounds()
         self.currentDirection = "right"
