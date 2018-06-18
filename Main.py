@@ -42,8 +42,8 @@ gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
 pygame.display.set_caption("Roboto")
 clock = pygame.time.Clock()
 
-icon = pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png")
-pygame.display.set_icon(icon)
+# icon = pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png")
+# pygame.display.set_icon(icon)
 
 caveBackgroundHome = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"),
                                             (displayWidth, displayHeight))
@@ -304,7 +304,6 @@ def gameLoop():
             screen_text = defaultFont.render("HIT", True, red)
             gameDisplay.blit(screen_text, (enemy.x, enemy.y))
 
-        print(enemy.playerBounds, getCursorPos())
         enemy.idleAnimation()
         gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
