@@ -74,7 +74,7 @@ class enemy(pygame.sprite.Sprite):
 
         # Shooting Variables
         self.shootRange = random.randint(150, 400)
-        self.shotVelocity = random.randint(6, 12)
+        self.shotVelocity = random.randint(6, 11)
         self.shootPos = 0
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))

@@ -1,6 +1,7 @@
 import os
 import pygame
 import time
+import pickle
 
 from Roboto import Player, Button, SquareIcon, EnemyRobot
 
@@ -71,10 +72,6 @@ helpButton = Button.Button(grey, black, gameDisplay, "HELP", centerDisplayWidth 
                            centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
 
-quitButton2 = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
-                            centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
-                            centerDisplayHeight, defaultFont)
-
 quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
                            centerDisplayHeight + 130, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
@@ -86,6 +83,16 @@ resumeButton = Button.Button(grey, black, gameDisplay, "RESUME", centerDisplayWi
 homeButton = Button.Button(grey, black, gameDisplay, "HOME", centerDisplayWidth - (buttonWidth / 2),
                            centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
+
+highScore = 0
+try:
+    with open('score.dat', 'rb') as file:
+        # highScore = 0
+        highScore = pickle.load(file)
+except:
+    highScore = 0
+    with open('score.dat', 'wb') as file:
+        pickle.dump(highScore, file)
 
 
 def music(soundtrack):
@@ -196,6 +203,7 @@ def helpScreen(lastScreen):
 def gameLoop():
     global musicStart
     global score
+    global highScore
     addScore = False
     while True:
         roboto.hasRestarted = False
@@ -212,7 +220,6 @@ def gameLoop():
         if keys[pygame.K_SPACE]:
             roboto.keepShooting = True
             roboto.isShooting = True
-            addScore = True
 
         if not keys[pygame.K_SPACE]:
             roboto.keepShooting = False
@@ -220,6 +227,8 @@ def gameLoop():
         if (roboto.isShooting and roboto.shootPos < roboto.shootRange or not roboto.finishedShot) or \
                 roboto.keepShooting:
             if int(round(time.time() * 1000)) - roboto.lastShot >= 200 or not roboto.keepShooting:
+                if roboto.shootPos == 0:
+                    addScore = True
                 roboto.shoot()
         else:
             roboto.isShooting = False
@@ -272,13 +281,17 @@ def gameLoop():
             roboto.ripRoboto(roboto.hasRestarted)
 
         while roboto.isDead:
+            if highScore < score:
+                with open('score.dat', 'rb') as file:
+                    highScore = pickle.load(file)
+                with open('score.dat', 'wb') as file:
+                    pickle.dump(0, file)
             gameOver()
 
         if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
                           roboto.bulletBounds[0], roboto.bulletBounds[1], roboto.bulletBounds[2], roboto.bulletBounds[3]) and addScore:
             screen_text = pygame.font.SysFont("comicsansms", 20).render("HIT", True, red)
             gameDisplay.blit(screen_text, (enemy.x, enemy.y))
-
             score += 1
             addScore = False
             roboto.endShot()
@@ -286,7 +299,7 @@ def gameLoop():
         enemy.idleAnimation()
         gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
-        showScores(score, 50)
+        showScores(score > highScore)
         pygame.display.update()
         clock.tick(FPS)
 
@@ -329,6 +342,7 @@ def gameOver():
     global justReset
     justReset = True
     gameDisplay.blit(caveBackground, (0, 0))
+    showScores(score > highScore)
 
     events = pygame.event.get()
     for event in events:
@@ -343,11 +357,11 @@ def gameOver():
 
     gameOver = titleFont.render("Game Over", True, white)
     gameDisplay.blit(gameOver, [centerDisplayWidth - (gameOver.get_rect().width / 2),
-                                centerDisplayHeight - (gameOver.get_rect().height / 2) - 100])
+                                centerDisplayHeight - (gameOver.get_rect().height / 2)])
 
     clickText = titleFont.render("Click anywhere to restart.", True, white)
     gameDisplay.blit(clickText, [centerDisplayWidth - (clickText.get_rect().width / 2),
-                                 centerDisplayHeight - (clickText.get_rect().height / 2) - 50])
+                                 centerDisplayHeight - (clickText.get_rect().height / 2) + 50])
 
     startButton.isShown = False
     resumeButton.isShown = False
@@ -385,16 +399,16 @@ def resetGame():
     score = 0
 
 
-def showScores(score, new):
+def showScores(new):
     screen_text = pygame.font.SysFont("comicsansms", 20).render("Score: " + str(score), True, white)
     gameDisplay.blit(screen_text, (20, 20))
 
-    # high_score = pygame.font.SysFont("comicsansms", 15).render("High Score: " + str(highScore), True, black)
+    high_score = pygame.font.SysFont("comicsansms", 20).render("High Score: " + str(highScore), True, white)
 
-    # if new:
-    #     high_score = pygame.font.SysFont("comicsansms", 20).render("New High Score!", True, red)
-    #
-    # gameDisplay.blit(high_score, (50, 50))
+    if new:
+        high_score = pygame.font.SysFont("comicsansms", 20).render("New High Score!", True, red)
+
+    gameDisplay.blit(high_score, (20, 50))
 
 
 music(startScreenMusic)

@@ -92,7 +92,7 @@ class player(object):
         self.y = y
         self.width = 130
         self.height = 130
-        self.velocity = 5
+        self.velocity = 6
         self.currentPlayer = rightPlayer
         self.display = display
         self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
@@ -238,7 +238,7 @@ class player(object):
             self.finishedShot = False
             self.playShotSound()
         if self.shootPos < self.shootRange:
-            if 30 < self.bulletX < 750:
+            if 30 < self.bulletX < 700:
                 if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                     self.bulletCycleCount = 0
                 self.shootPos += 7
