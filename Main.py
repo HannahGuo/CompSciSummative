@@ -249,7 +249,6 @@ def gameLoop():
 
             if not roboto.jumping:
                 if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
-                    roboto.firstMove = False
                     roboto.lastJump = 0
                     roboto.jumping = True
             else:
@@ -261,7 +260,7 @@ def gameLoop():
             else:
                 enemy.isShooting = False
 
-        if roboto.firstMove and not musicStart:
+        if not musicStart:
             music(mainMusic)
             musicStart = True
 
