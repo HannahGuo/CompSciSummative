@@ -303,7 +303,7 @@ def gameLoop():
             roboto.endShot()
 
         if showHit and int(round(time.time() * 1000)) - hitTimer <= 400:
-            screen_text = pygame.font.SysFont("comicsansms", 20).render("HIT", True, red)
+            screen_text = defaultFont.render("HIT", True, red)
             gameDisplay.blit(screen_text, (enemy.x, enemy.y))
 
         enemy.idleAnimation()

@@ -116,7 +116,7 @@ class player:
         self.deadCycleCount = 0
 
         # Jumping Variables
-        self.jumpCounter = 12
+        self.jumpCounter = 13
         self.jumpBound = self.jumpCounter
         self.lastJump = 0
 

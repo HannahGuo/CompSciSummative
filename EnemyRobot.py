@@ -72,8 +72,8 @@ class enemy:
         self.bulletCycleCount = 0
 
         # Shooting Variables
-        self.shootRange = random.randint(150, 400)
-        self.shotVelocity = random.randint(6, 11)
+        self.shootRange = random.randint(150, 350)
+        self.shotVelocity = random.randint(6, 16)
         self.shootPos = 0
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
@@ -85,7 +85,7 @@ class enemy:
         self.bulletX = 0
         self.bulletY = self.y + (self.height / 2) - 20
         self.randomInterval = random.randint(200, 800)
-        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
+        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY + 8]
 
     def idleAnimation(self):
         if not self.isShooting:
@@ -110,7 +110,7 @@ class enemy:
         if self.shootPos < self.shootRange and 30 < self.bulletX < 750:
             if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                 self.bulletCycleCount = 0
-            self.shootPos += self.shotVelocity
+            self.shootPos += self.velocity
             self.bulletCycleCount += 1
             self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5],
                                                                       (40, 40)))
@@ -137,12 +137,12 @@ class enemy:
         self.muzzleImagesCount = 0
         self.randomInterval = random.randint(100, 2500)
         self.shootPos = 0
-        self.shootRange = random.randint(150, 400)
-        self.shotVelocity = random.randint(6, 12)
+        self.shootRange = random.randint(150, 350)
+        self.shotVelocity = random.randint(6, 16)
         self.resetBulletBounds()
 
     def updateBulletBounds(self):
-        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
+        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY + 3]
 
     def resetBulletBounds(self):
         self.bulletBounds = [0, 0, 0, 0]
