@@ -1,17 +1,46 @@
 import pygame
 import time
+import random
 
 # Image Assignments
-idleImages = [pygame.image.load("../Roboto/images/robot/Idle1.png"),
-              pygame.image.load("../Roboto/images/robot/Idle2.png"),
-              pygame.image.load("../Roboto/images/robot/Idle3.png"),
-              pygame.image.load("../Roboto/images/robot/Idle4.png"),
-              pygame.image.load("../Roboto/images/robot/Idle5.png"),
-              pygame.image.load("../Roboto/images/robot/Idle6.png"),
-              pygame.image.load("../Roboto/images/robot/Idle7.png"),
-              pygame.image.load("../Roboto/images/robot/Idle8.png"),
-              pygame.image.load("../Roboto/images/robot/Idle9.png"),
-              pygame.image.load("../Roboto/images/robot/Idle10.png")]
+idleImages = [pygame.image.load("../Roboto/images/darkrobot/Idle1.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle2.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle3.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle4.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle5.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle6.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle7.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle8.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle9.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Idle10.png")]
+
+idleShootImages = [pygame.image.load("../Roboto/images/darkrobot/Shoot1.png"),
+                   pygame.image.load("../Roboto/images/darkrobot/Shoot2.png"),
+                   pygame.image.load("../Roboto/images/darkrobot/Shoot3.png"),
+                   pygame.image.load("../Roboto/images/darkrobot/Shoot4.png")]
+
+bulletImages = [pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyBullet2.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyBullet3.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyBullet4.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyBullet5.png")]
+
+muzzleImages = [pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle1.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle2.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle3.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle4.png"),
+                pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle5.png")]
+
+deadImages = [pygame.image.load("../Roboto/images/darkrobot/Dead1.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead2.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead3.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead4.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead5.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead6.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead7.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead8.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead9.png"),
+              pygame.image.load("../Roboto/images/darkrobot/Dead10.png")]
 
 runImages = [pygame.image.load("../Roboto/images/robot/Run1.png"),
              pygame.image.load("../Roboto/images/robot/Run2.png"),
@@ -31,11 +60,6 @@ jumpImages = [pygame.image.load("../Roboto/images/robot/Jump1.png"),
               pygame.image.load("../Roboto/images/robot/Jump7.png"),
               pygame.image.load("../Roboto/images/robot/Jump8.png")]
 
-idleShootImages = [pygame.image.load("../Roboto/images/robot/Shoot1.png"),
-                   pygame.image.load("../Roboto/images/robot/Shoot2.png"),
-                   pygame.image.load("../Roboto/images/robot/Shoot3.png"),
-                   pygame.image.load("../Roboto/images/robot/Shoot4.png")]
-
 runShootImages = [pygame.image.load("../Roboto/images/robot/RunShoot1.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot2.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot3.png"),
@@ -52,29 +76,6 @@ jumpShootImages = [pygame.image.load("../Roboto/images/robot/JumpShoot1.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot4.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot5.png")]
 
-bulletImages = [pygame.image.load("../Roboto/images/projectiles/PlayerBullet1.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerBullet2.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerBullet3.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerBullet4.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerBullet5.png")]
-
-muzzleImages = [pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle1.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle2.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle3.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle4.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle5.png")]
-
-deadImages = [pygame.image.load("../Roboto/images/robot/Dead1.png"),
-              pygame.image.load("../Roboto/images/robot/Dead2.png"),
-              pygame.image.load("../Roboto/images/robot/Dead3.png"),
-              pygame.image.load("../Roboto/images/robot/Dead4.png"),
-              pygame.image.load("../Roboto/images/robot/Dead5.png"),
-              pygame.image.load("../Roboto/images/robot/Dead6.png"),
-              pygame.image.load("../Roboto/images/robot/Dead7.png"),
-              pygame.image.load("../Roboto/images/robot/Dead8.png"),
-              pygame.image.load("../Roboto/images/robot/Dead9.png"),
-              pygame.image.load("../Roboto/images/robot/Dead10.png")]
-
 
 def leftImageMode(image):
     return pygame.transform.flip(image, True, False)
@@ -84,27 +85,26 @@ def leftImageMode(image):
 rightPlayer = pygame.transform.scale(idleImages[0], (130, 130))
 leftPlayer = leftImageMode(rightPlayer)
 
-
-class player:
+class Player2(pygame.sprite.Sprite):
     def __init__(self, x, y, display):
         # Core Variables
         self.x = x
         self.y = y
         self.width = 130
         self.height = 130
-        self.velocity = 6
+        self.velocity = 5
         self.currentPlayer = rightPlayer
         self.display = display
-        self.playerBounds = [self.x + 30, self.x + 85, self.y + 15, self.y + 120]
+        self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
         self.hasRestarted = False
 
         # Player States
         self.jumping = False
         self.isShooting = False
+        self.direction = "right"
+        self.firstMove = True
         self.isDead = False
         self.gotShot = False
-        self.firstMove = True
-        self.direction = "right"
 
         # Image Cycle Counters
         self.idleCycleCount = 0
@@ -238,7 +238,7 @@ class player:
             self.finishedShot = False
             self.playShotSound()
         if self.shootPos < self.shootRange:
-            if 30 < self.bulletX < 700:
+            if 30 < self.bulletX < 750:
                 if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                     self.bulletCycleCount = 0
                 self.shootPos += 7
@@ -263,6 +263,7 @@ class player:
     def endShot(self):
         if self.muzzleImagesCount < ((len(muzzleImages) - 1) * 3) - 1 and not self.finishedShot:
             self.muzzleImagesCount += 1
+            self.shootPos += 5
             if self.currentDirection == "right":
                 self.muzzle = pygame.transform.scale(muzzleImages[self.muzzleImagesCount // 3], (19, 50))
                 self.bulletX = self.currentX + self.shootPos + (self.width / 2) + 20
@@ -294,7 +295,7 @@ class player:
 
     def updateBounds(self):
         if self.direction == "right":
-            self.playerBounds = [self.x + 30, self.x + 85, self.y + 15, self.y + 120]
+            self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
         else:
             self.playerBounds = [self.x + 100, self.x + 40, self.y + 15, self.y + 120]
 
@@ -313,11 +314,9 @@ class player:
             self.y = 600 - 155 - (130 / 2)
 
             if self.direction == "right":
-                self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8],
-                                                            (self.width, self.height))
+                self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
             else:
-                self.currentPlayer = leftImageMode(pygame.transform.scale(deadImages[self.deadCycleCount // 8],
-                                                                          (self.width, self.height)))
+                self.currentPlayer = leftImageMode(pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height)))
         elif not pronounceDead:
             self.isDead = True
 
