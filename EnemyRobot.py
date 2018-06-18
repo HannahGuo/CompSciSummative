@@ -58,7 +58,6 @@ class enemy:
         self.y = y
         self.width = 130
         self.height = 130
-        self.velocity = 5
         self.currentEnemy = leftPlayer
         self.display = display
         self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
@@ -110,7 +109,7 @@ class enemy:
         if self.shootPos < self.shootRange and 30 < self.bulletX < 750:
             if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                 self.bulletCycleCount = 0
-            self.shootPos += self.velocity
+            self.shootPos += self.shotVelocity
             self.bulletCycleCount += 1
             self.currentBullet = leftImageMode(pygame.transform.scale(bulletImages[self.bulletCycleCount // 5],
                                                                       (40, 40)))

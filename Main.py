@@ -14,7 +14,6 @@ black = (0, 0, 0)
 ground = (26, 20, 17)
 red = (255, 0, 0)
 lightRed = (244, 66, 66)
-green = (0, 155, 0)
 grey = (73, 73, 73)
 darkYellow = (255, 204, 0)
 yellow = (255, 255, 0)
@@ -26,7 +25,6 @@ centerDisplayWidth = displayWidth / 2
 centerDisplayHeight = displayHeight / 2
 buttonWidth = 150
 buttonHeight = 50
-
 groundHeight = displayHeight - 150
 FPS = 60
 
