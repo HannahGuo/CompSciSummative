@@ -178,6 +178,7 @@ class Player2(pygame.sprite.Sprite):
             else:
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(runImages[self.runCycleCount // 3], (self.width, self.height)))
+                #here is the error, it doesn't actually run????
 
         elif direction == "right" and self.x < 600:
             self.x += self.velocity
