@@ -101,10 +101,10 @@ class player:
         # Player States
         self.jumping = False
         self.isShooting = False
-        self.direction = "right"
-        self.firstMove = True
         self.isDead = False
         self.gotShot = False
+        self.firstMove = True
+        self.direction = "right"
 
         # Image Cycle Counters
         self.idleCycleCount = 0

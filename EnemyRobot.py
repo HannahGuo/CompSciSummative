@@ -70,7 +70,6 @@ class enemy:
         self.idleCycleCount = 0
         self.idleShootCount = 0
         self.bulletCycleCount = 0
-        self.deadCycleCount = 0
 
         # Shooting Variables
         self.shootRange = random.randint(150, 400)
@@ -140,14 +139,7 @@ class enemy:
         self.shootPos = 0
         self.shootRange = random.randint(150, 400)
         self.shotVelocity = random.randint(6, 12)
-        self.bulletBounds = [0, 0, 0, 0]
-
-    def ripRoboto(self):
-        if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1:
-            self.deadCycleCount += 1
-            self.currentEnemy = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
-        else:
-            self.deadCycleCount = 0
+        self.resetBulletBounds()
 
     def updateBulletBounds(self):
         self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
