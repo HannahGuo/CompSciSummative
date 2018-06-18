@@ -89,7 +89,7 @@ homeButton = Button.Button(grey, black, gameDisplay, "HOME", centerDisplayWidth 
 
 caveBackgroundRunning = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"), (displayWidth, displayHeight-100))
 caveBackground1 = - 50
-caveBackground2 = caveBackground.get_width() - 50
+caveBackground2 = caveBackground.get_width() -50
 
 def redraw_window():
     gameDisplay.blit(caveBackgroundRunning, (caveBackground1,0))

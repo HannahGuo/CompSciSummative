@@ -160,6 +160,7 @@ class Player2(pygame.sprite.Sprite):
                 self.currentPlayer = pygame.transform.scale(idleShootImages[self.idleShootCount // 3],
                                                             (self.width, self.height))
 
+
     def movingAnimation(self, direction):
         self.firstMove = False
         if self.runCycleCount > ((len(runImages) - 1) * 3) - 1:
@@ -176,9 +177,9 @@ class Player2(pygame.sprite.Sprite):
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(runShootImages[self.runShootCycleCount // 3], (self.width, self.height)))
             else:
-                self.currentPlayer = leftImageMode(
-                    pygame.transform.scale(runImages[self.runCycleCount // 3], (self.width, self.height)))
-                #here is the error, it doesn't actually run????
+                self.currentPlayer = leftImageMode(pygame.transform.scale(runImages[self.runCycleCount // 3],
+                                                            (self.width, self.height)))
+        
 
         elif direction == "right" and self.x < 600:
             self.x += self.velocity

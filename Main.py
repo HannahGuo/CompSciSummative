@@ -79,16 +79,20 @@ except:
     with open('score.dat', 'wb') as file:
         pickle.dump(highScore, file)
 
-startButton = Button.Button(grey, black, gameDisplay, "START", centerDisplayWidth - (buttonWidth / 2),
-                            centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
+startButton = Button.Button(grey, black, gameDisplay, "SINGLE PLAYER", centerDisplayWidth - (buttonWidth / 2),
+                            centerDisplayHeight - 100, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
+                            centerDisplayHeight, defaultFont)
+
+multiplayerButton = Button.Button(grey, black, gameDisplay, "TWO PLAYER", centerDisplayWidth - (buttonWidth / 2),
+                            centerDisplayHeight, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                             centerDisplayHeight, defaultFont)
 
 helpButton = Button.Button(grey, black, gameDisplay, "HELP", centerDisplayWidth - (buttonWidth / 2),
-                           centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
+                           centerDisplayHeight +100, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
 
 quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
-                           centerDisplayHeight + 130, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
+                           centerDisplayHeight + 200, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
 
 resumeButton = Button.Button(grey, black, gameDisplay, "RESUME", centerDisplayWidth - (buttonWidth / 2),
@@ -122,19 +126,24 @@ def startScreen():
                                        (displayHeight / 2) - (screen_text.get_rect().height / 2) - 100])
 
         startButton.showButton()
+        multiplayerButton.showButton()
         helpButton.showButton()
         quitButton.showButton()
 
         if not justReset:
             if startButton.isHovered(getCursorPos()):
                 if isLeftMouseClicked():
-                    twoPlayer()
+                    gameLoop()
             elif helpButton.isHovered(getCursorPos()):
                 if isLeftMouseClicked():
                     helpScreen("start")
             elif quitButton.isHovered(getCursorPos()):
                 if isLeftMouseClicked():
                     quitProgram()
+            elif multiplayerButton.isHovered(getCursorPos()):
+                if isLeftMouseClicked():
+                    twoPlayer()
+            
         elif justReset and not isLeftMouseClicked():
             justReset = False
 
@@ -191,7 +200,7 @@ def helpScreen(lastScreen):
         xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black, defaultFont)
 
         if xButton.left < getCursorPos()[0] < xButton.left + xButton.size and xButton.top < getCursorPos()[1] < \
-                xButton.top + xButton.size:
+            xButton.top + xButton.size:
             xButton.hover()
             if isLeftMouseClicked():
                 if lastScreen == "start":
