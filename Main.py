@@ -288,7 +288,7 @@ def gameLoop():
                 with open('score.dat', 'rb') as fileName:
                     highScore = pickle.load(fileName)
                 with open('score.dat', 'wb') as fileName:
-                    pickle.dump(0, fileName)
+                    pickle.dump(score, fileName)
             gameOver()
 
         if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
