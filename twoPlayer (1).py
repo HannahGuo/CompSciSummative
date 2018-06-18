@@ -312,10 +312,10 @@ def twoPlayer():
                     (Player2.direction == "left" and keys[pygame.K_RIGHT]):
                 Player2.keepShooting = False
 
-            if keys[pygame.K_a] and (Player2.x > -30) and not keys[pygame.K_RIGHT]:
+            if keys[pygame.K_a] and (Player2.x > -30) and not keys[pygame.K_d]:
                 Player2.movingAnimation("left")
                
-            if keys[pygame.K_d] and (Player2.x < 695) and not keys[pygame.K_LEFT]:
+            if keys[pygame.K_d] and (Player2.x < 695) and not keys[pygame.K_a]:
                 Player2.movingAnimation("right")
                 
             else:
