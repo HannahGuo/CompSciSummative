@@ -95,12 +95,16 @@ class player(object):
         self.velocity = 5
         self.currentPlayer = rightPlayer
         self.display = display
+        self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
+        self.hasRestarted = False
 
         # Player States
         self.jumping = False
         self.isShooting = False
         self.direction = "right"
         self.firstMove = True
+        self.isDead = False
+        self.gotShot = False
 
         # Image Cycle Counters
         self.idleCycleCount = 0
@@ -174,7 +178,7 @@ class player(object):
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(runImages[self.runCycleCount // 3], (self.width, self.height)))
 
-        elif direction == "right":
+        elif direction == "right" and self.x < 600:
             self.x += self.velocity
             self.direction = direction
             if self.isShooting:
@@ -186,6 +190,7 @@ class player(object):
             else:
                 self.currentPlayer = pygame.transform.scale(runImages[self.runCycleCount // 3],
                                                             (self.width, self.height))
+        self.updateBounds()
 
     def jump(self):
         if self.jumpCounter >= -self.jumpBound:
@@ -201,6 +206,7 @@ class player(object):
                 else:
                     self.currentPlayer = pygame.transform.scale(jumpImages[self.jumpCounter // 3],
                                                                 (self.width, self.height))
+                    self.updateBounds()
             else:
                 if self.isShooting:
                     self.jumpShootCycleCount += 1
@@ -281,10 +287,31 @@ class player(object):
         self.lastShot = int(round(time.time() * 1000))
         self.muzzleImagesCount = 0
         self.shootPos = 0
-        
-    def ripRoboto(self):
-        if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1:
-            self.deadCycleCount += 1
-            self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
+
+    def updateBounds(self):
+        if self.direction == "right":
+            self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
         else:
-            self.deadCycleCount = 0
+            self.playerBounds = [self.x + 100, self.x + 40, self.y + 15, self.y + 120]
+
+    def ripRoboto(self, pronounceDead):
+        if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1 and self.gotShot:
+            self.deadCycleCount += 1
+            self.y = 600 - 155 - (130 / 2)
+
+            if self.direction == "right":
+                self.currentPlayer = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
+            else:
+                self.currentPlayer = leftImageMode(pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height)))
+        elif not pronounceDead:
+            self.isDead = True
+
+    def resetRoboto(self):
+        self.isDead = False
+        self.gotShot = False
+        self.deadCycleCount = 0
+        self.x = 20
+        self.y = 600 - 155 - (130 / 2)
+        self.hasRestarted = True
+        self.updateBounds()
+        self.currentDirection = "right"

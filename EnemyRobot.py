@@ -51,7 +51,7 @@ def leftImageMode(image):
 leftPlayer = leftImageMode(pygame.transform.scale(idleImages[0], (130, 130)))
 
 
-class enemy(object):
+class enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, display):
         # Core Variables
         self.x = x
@@ -61,6 +61,7 @@ class enemy(object):
         self.velocity = 5
         self.currentEnemy = leftPlayer
         self.display = display
+        self.playerBounds = [self.x + 30, self.x + 90, self.y + 15, self.y + 120]
 
         # Player States
         self.isShooting = False
@@ -72,8 +73,8 @@ class enemy(object):
         self.deadCycleCount = 0
 
         # Shooting Variables
-        self.shootRange = random.randint(150, 200)
-        self.shotVelocity = random.randint(6, 10)
+        self.shootRange = random.randint(150, 400)
+        self.shotVelocity = random.randint(6, 12)
         self.shootPos = 0
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
@@ -86,6 +87,7 @@ class enemy(object):
         self.bulletX = 0
         self.bulletY = 0
         self.randomInterval = random.randint(200, 800)
+        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]
 
     def idleAnimation(self):
         if not self.isShooting and not self.keepShooting:
@@ -101,18 +103,12 @@ class enemy(object):
             self.currentEnemy = leftImageMode(pygame.transform.scale(idleShootImages[self.idleShootCount // 3],
                                                                      (self.width, self.height)))
 
-    @staticmethod
-    def playShotSound():
-        shootingSound = "../Roboto/music/Blaster.wav"
-        shootingSoundEffect = pygame.mixer.Sound(shootingSound)
-        shootingSoundEffect.set_volume(0.2)
-        shootingSoundEffect.play()
-
     def shoot(self):
         self.isShooting = True
+        self.updateBulletBounds()
         if self.shootPos == 0:
+            self.bulletBounds = [0, 0, 0, 0]
             self.finishedShot = False
-            self.playShotSound()
         if self.shootPos < self.shootRange and 30 < self.bulletX < 750:
             if self.bulletCycleCount > ((len(bulletImages) - 1) * 5) - 1:
                 self.bulletCycleCount = 0
@@ -124,6 +120,7 @@ class enemy(object):
             self.bulletY = self.y + (self.height / 2) - 20
             self.display.blit(self.currentBullet, (self.bulletX, self.bulletY))
         else:
+            self.bulletBounds = [0, 0, 0, 0]
             self.endShot()
 
     def endShot(self):
@@ -145,8 +142,9 @@ class enemy(object):
         self.muzzleImagesCount = 0
         self.randomInterval = random.randint(100, 2500)
         self.shootPos = 0
-        self.shootRange = random.randint(150, 200)
-        self.shotVelocity = random.randint(4, 10)
+        self.shootRange = random.randint(150, 400)
+        self.shotVelocity = random.randint(6, 12)
+        self.bulletBounds = [0, 0, 0, 0]
 
     def ripRoboto(self):
         if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1:
@@ -154,3 +152,6 @@ class enemy(object):
             self.currentEnemy = pygame.transform.scale(deadImages[self.deadCycleCount // 8], (self.width, self.height))
         else:
             self.deadCycleCount = 0
+
+    def updateBulletBounds(self):
+        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY]

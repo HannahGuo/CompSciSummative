@@ -1,7 +1,6 @@
 import os
 import pygame
 import time
-import random
 
 from Roboto import Player, Button, SquareIcon, EnemyRobot
 
@@ -26,6 +25,7 @@ centerDisplayWidth = displayWidth / 2
 centerDisplayHeight = displayHeight / 2
 buttonWidth = 150
 buttonHeight = 50
+
 groundHeight = displayHeight - 150
 FPS = 60
 
@@ -53,13 +53,15 @@ rightKey = pygame.transform.scale(pygame.image.load("../Roboto/images/RightKey.p
 upKey = pygame.transform.scale(pygame.image.load("../Roboto/images/UpKey.png"), (50, 50))
 spaceBar = pygame.transform.scale(pygame.image.load("../Roboto/images/Space.png"), (180, 60))
 
-roboto = Player.player(130, displayHeight - 155 - (130 / 2), gameDisplay)
-enemy = EnemyRobot.enemy(130 - 50, displayHeight - 155 - (130 / 2), gameDisplay)
+roboto = Player.player(20, displayHeight - 155 - (130 / 2), gameDisplay)
+enemy = EnemyRobot.enemy(displayWidth - 150, displayHeight - 155 - (130 / 2), gameDisplay)
 
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
 startScreenRobot.velocity = 3
 
 musicStart = False
+justReset = False
+score = 0
 
 startButton = Button.Button(grey, black, gameDisplay, "START", centerDisplayWidth - (buttonWidth / 2),
                             centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
@@ -69,6 +71,10 @@ helpButton = Button.Button(grey, black, gameDisplay, "HELP", centerDisplayWidth 
                            centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
 
+quitButton2 = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
+                            centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
+                            centerDisplayHeight, defaultFont)
+
 quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
                            centerDisplayHeight + 130, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
@@ -76,6 +82,10 @@ quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth 
 resumeButton = Button.Button(grey, black, gameDisplay, "RESUME", centerDisplayWidth - (buttonWidth / 2),
                              centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                              centerDisplayHeight, defaultFont)
+
+homeButton = Button.Button(grey, black, gameDisplay, "HOME", centerDisplayWidth - (buttonWidth / 2),
+                           centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
+                           centerDisplayHeight, defaultFont)
 
 
 def music(soundtrack):
@@ -85,6 +95,7 @@ def music(soundtrack):
 
 
 def startScreen():
+    global justReset
     while True:
         events = pygame.event.get()
         for event in events:
@@ -102,15 +113,21 @@ def startScreen():
         helpButton.showButton()
         quitButton.showButton()
 
-        if startButton.isHovered(getCursorPos()):
-            if isLeftMouseClicked():
-                gameLoop()
-        elif helpButton.isHovered(getCursorPos()):
-            if isLeftMouseClicked():
-                helpScreen("start")
-        elif quitButton.isHovered(getCursorPos()):
-            if isLeftMouseClicked():
-                quitProgram()
+        if not justReset:
+            if startButton.isHovered(getCursorPos()) and startButton.isShown:
+                if isLeftMouseClicked():
+                    startButton.isShown = False
+                    gameLoop()
+            elif helpButton.isHovered(getCursorPos()) and helpButton.isShown:
+                if isLeftMouseClicked() and helpButton.isShown:
+                    helpButton.isShown = False
+                    helpScreen("start")
+            elif quitButton.isHovered(getCursorPos()) and quitButton.isShown:
+                if isLeftMouseClicked():
+                    quitButton.isShown = False
+                    quitProgram()
+        elif justReset and not isLeftMouseClicked():
+            justReset = False
 
         if startScreenRobot.x > displayWidth + 1400:
             startScreenRobot.x = -(startScreenRobot.width / 2)
@@ -141,9 +158,9 @@ def helpScreen(lastScreen):
         titleText = titleFont.render("Help", True, white)
         helpText1 = defaultFont.render("You play as Roboto, the robot. Roboto has been created to test the ", True,
                                        white)
-        helpText2 = defaultFont.render("mettle of the Cavern. Survive as long as you can, and earn the most", True,
+        helpText2 = defaultFont.render("strength of Dark Roboto. Survive as long as you can, and earn the", True,
                                        white)
-        helpText3 = defaultFont.render("points by shooting monsters and dodging obstacles!", True, white)
+        helpText3 = defaultFont.render("most points by returning shots to Dark Roboto!", True, white)
         helpText4 = subTitleFont.render("Controls", True, white)
         helpText5 = defaultFont.render("Left and Right Arrow Keys to Move", True, white)
         helpText6 = defaultFont.render("Up Arrow Key to Jump", True, white)
@@ -179,6 +196,7 @@ def helpScreen(lastScreen):
 def gameLoop():
     global musicStart
     while True:
+        roboto.hasRestarted = False
         gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
@@ -203,44 +221,35 @@ def gameLoop():
         else:
             roboto.isShooting = False
 
-        if (roboto.direction == "right" and keys[pygame.K_LEFT]) or \
-                (roboto.direction == "left" and keys[pygame.K_RIGHT]):
-            roboto.keepShooting = False
+        if not roboto.gotShot:
+            if (roboto.direction == "right" and keys[pygame.K_LEFT]) or \
+                    (roboto.direction == "left" and keys[pygame.K_RIGHT]):
+                roboto.keepShooting = False
 
-        if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
-            roboto.movingAnimation("left")
-        elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
-            roboto.movingAnimation("right")
-        else:
-            roboto.idleAnimation()
+            if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
+                roboto.movingAnimation("left")
+            elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
+                roboto.movingAnimation("right")
+            else:
+                roboto.idleAnimation()
 
-        if not roboto.jumping:
-            if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
-                roboto.firstMove = False
-                roboto.lastJump = 0
-                roboto.jumping = True
-        else:
-            roboto.jump()
+            if not roboto.jumping:
+                if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
+                    roboto.firstMove = False
+                    roboto.lastJump = 0
+                    roboto.jumping = True
+            else:
+                roboto.jump()
 
         if roboto.firstMove and not musicStart:
             music(mainMusic)
             musicStart = True
-
-        # if keys[pygame.K_p]:
-        #     roboto.ripRoboto()
-        # else:
-        #     roboto.deadCycleCount = 0
 
         if int(round(time.time() * 1000)) - enemy.lastShot >= enemy.randomInterval:
             enemy.shoot()
             enemy.isShooting = True
         else:
             enemy.isShooting = False
-
-        enemy.idleAnimation()
-
-        gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
-        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
 
         pauseButton = SquareIcon.SquareIcon(darkYellow, yellow, gameDisplay, "| |", displayWidth - 50, 20, 30, darkGrey,
                                             pauseFont)
@@ -251,6 +260,19 @@ def gameLoop():
             if isLeftMouseClicked():
                 pause()
 
+        if checkCollision(roboto.playerBounds[0], roboto.playerBounds[1], roboto.playerBounds[2], roboto.playerBounds[3],
+                          enemy.bulletBounds[0], enemy.bulletBounds[1], enemy.bulletBounds[2], enemy.bulletBounds[3]):
+            roboto.gotShot = True
+
+        if roboto.gotShot:
+            roboto.ripRoboto(roboto.hasRestarted)
+
+        while roboto.isDead:
+            gameOver()
+
+        enemy.idleAnimation()
+        gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
+        gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         pygame.display.update()
         clock.tick(FPS)
 
@@ -273,17 +295,52 @@ def pause():
         helpButton.showButton()
         quitButton.showButton()
 
-        if resumeButton.isHovered(getCursorPos()):
+        if resumeButton.isHovered(getCursorPos()) and resumeButton.isShown:
             if isLeftMouseClicked():
+                resumeButton.isShown = False
                 gameLoop()
-        elif helpButton.isHovered(getCursorPos()):
+        elif helpButton.isHovered(getCursorPos()) and helpButton.isShown:
             if isLeftMouseClicked():
+                helpButton.isShown = False
                 helpScreen("pause")
-        elif quitButton.isHovered(getCursorPos()):
+        elif quitButton.isHovered(getCursorPos()) and quitButton.isShown:
             if isLeftMouseClicked():
+                quitButton.isShown = False
                 quitProgram()
 
         pygame.display.update()
+
+
+def gameOver():
+    global justReset
+    justReset = True
+    gameDisplay.blit(caveBackground, (0, 0))
+
+    events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+            quitProgram()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            roboto.hasRestarted = True
+            roboto.resetRoboto()
+            startScreen()
+
+    gameOver = titleFont.render("Game Over", True, white)
+    gameDisplay.blit(gameOver, [centerDisplayWidth - (gameOver.get_rect().width / 2),
+                                centerDisplayHeight - (gameOver.get_rect().height / 2) - 100])
+
+    clickText = titleFont.render("Click anywhere to restart.", True, white)
+    gameDisplay.blit(clickText, [centerDisplayWidth - (clickText.get_rect().width / 2),
+                                 centerDisplayHeight - (clickText.get_rect().height / 2) - 50])
+
+    startButton.isShown = False
+    resumeButton.isShown = False
+    quitButton.isShown = False
+    helpButton.isShown = False
+
+    print(helpButton.isShown)
+
+    pygame.display.update()
 
 
 def quitProgram():
@@ -297,6 +354,19 @@ def getCursorPos():
 
 def isLeftMouseClicked():
     return pygame.mouse.get_pressed()[0]
+
+
+def checkCollision(minX1, maxX1, minY1, maxY1, minX2, maxX2, minY2, maxY2):
+    return (minX2 <= minX1 <= maxX2 or minX2 <= maxX1 <= maxX2) and (minY1 <= minY2 <= maxY1 or minY1 <= maxY2 <= maxY1)
+
+
+def checkCollisionX(minX1, maxX1, minX2, maxX2):
+    return minX2 <= minX1 <= maxX2 or minX2 <= maxX1 <= maxX2
+
+
+def resetGame():
+    global roboto
+    roboto = Player.player(20, displayHeight - 155 - (130 / 2), gameDisplay)
 
 
 music(startScreenMusic)

@@ -14,6 +14,7 @@ class Button(object):
         self.centerWidth = centerWidth
         self.centerHeight = centerHeight
         self.font = font
+        self.isShown = False
 
     def displayText(self):
         displayText = self.font.render(self.text, True, self.textColour)
@@ -28,6 +29,7 @@ class Button(object):
     def showButton(self):
         self.display.fill(self.colour, (self.left, self.top, self.width, self.height))
         self.displayText()
+        self.isShown = True
 
     def isHovered(self, cursor):
         if self.left < cursor[0] < self.left + self.width and self.top < cursor[1] < self.top + self.height:
