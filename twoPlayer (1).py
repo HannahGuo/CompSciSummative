@@ -362,9 +362,9 @@ def twoPlayer():
             gameDisplay.blit(screen_text, (Player2.x, Player2.y))
 
             score += 1
-            if score == 3:
-                Roboto.rip()
-                gameOver()
+        
+            if score != 0:
+                roboto.ripRoboto(True)
                 
             addScore = False
             Player2.endShot()
