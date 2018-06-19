@@ -1,8 +1,19 @@
+# Hannah Guo and Manav Shardha
+# June 18th 2018
+# ICS3UR
+# This class is for the player's robot. It includes the player sprites, their running, jumping, shooting and death.
+# Each player state changes the currentPlayer according to the conditions inside the function. currentPlayer is the
+# robot's sprite that is displayed during the gameLoop in the Main file.
+
 import pygame
 import time
 
-# Image Assignments
-idleImages = [pygame.image.load("../Roboto/images/robot/Idle1.png"),
+# Image assignments are listed below. These tuples store the images for the robot's various states. They can be accessed
+# via a 0-based index (for example, the first idle image can be accessed using idleImages[0]). We used tuples because
+# these values never change during the code.
+
+# Tuple for idle images
+idleImages = (pygame.image.load("../Roboto/images/robot/Idle1.png"),
               pygame.image.load("../Roboto/images/robot/Idle2.png"),
               pygame.image.load("../Roboto/images/robot/Idle3.png"),
               pygame.image.load("../Roboto/images/robot/Idle4.png"),
@@ -11,32 +22,36 @@ idleImages = [pygame.image.load("../Roboto/images/robot/Idle1.png"),
               pygame.image.load("../Roboto/images/robot/Idle7.png"),
               pygame.image.load("../Roboto/images/robot/Idle8.png"),
               pygame.image.load("../Roboto/images/robot/Idle9.png"),
-              pygame.image.load("../Roboto/images/robot/Idle10.png")]
+              pygame.image.load("../Roboto/images/robot/Idle10.png"))
 
-runImages = [pygame.image.load("../Roboto/images/robot/Run1.png"),
+# Tuple for running images
+runImages = (pygame.image.load("../Roboto/images/robot/Run1.png"),
              pygame.image.load("../Roboto/images/robot/Run2.png"),
              pygame.image.load("../Roboto/images/robot/Run3.png"),
              pygame.image.load("../Roboto/images/robot/Run4.png"),
              pygame.image.load("../Roboto/images/robot/Run5.png"),
              pygame.image.load("../Roboto/images/robot/Run6.png"),
              pygame.image.load("../Roboto/images/robot/Run7.png"),
-             pygame.image.load("../Roboto/images/robot/Run8.png")]
+             pygame.image.load("../Roboto/images/robot/Run8.png"))
 
-jumpImages = [pygame.image.load("../Roboto/images/robot/Jump1.png"),
+# Tuple for jumping images
+jumpImages = (pygame.image.load("../Roboto/images/robot/Jump1.png"),
               pygame.image.load("../Roboto/images/robot/Jump2.png"),
               pygame.image.load("../Roboto/images/robot/Jump3.png"),
               pygame.image.load("../Roboto/images/robot/Jump4.png"),
               pygame.image.load("../Roboto/images/robot/Jump5.png"),
               pygame.image.load("../Roboto/images/robot/Jump6.png"),
               pygame.image.load("../Roboto/images/robot/Jump7.png"),
-              pygame.image.load("../Roboto/images/robot/Jump8.png")]
+              pygame.image.load("../Roboto/images/robot/Jump8.png"))
 
-idleShootImages = [pygame.image.load("../Roboto/images/robot/Shoot1.png"),
+# Tuple for idle and shooting images
+idleShootImages = (pygame.image.load("../Roboto/images/robot/Shoot1.png"),
                    pygame.image.load("../Roboto/images/robot/Shoot2.png"),
                    pygame.image.load("../Roboto/images/robot/Shoot3.png"),
-                   pygame.image.load("../Roboto/images/robot/Shoot4.png")]
+                   pygame.image.load("../Roboto/images/robot/Shoot4.png"))
 
-runShootImages = [pygame.image.load("../Roboto/images/robot/RunShoot1.png"),
+# Tuple for running and shooting images
+runShootImages = (pygame.image.load("../Roboto/images/robot/RunShoot1.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot2.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot3.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot4.png"),
@@ -44,27 +59,31 @@ runShootImages = [pygame.image.load("../Roboto/images/robot/RunShoot1.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot6.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot7.png"),
                   pygame.image.load("../Roboto/images/robot/RunShoot8.png"),
-                  pygame.image.load("../Roboto/images/robot/RunShoot9.png")]
+                  pygame.image.load("../Roboto/images/robot/RunShoot9.png"))
 
-jumpShootImages = [pygame.image.load("../Roboto/images/robot/JumpShoot1.png"),
+# Tuple for jumping and shooting images
+jumpShootImages = (pygame.image.load("../Roboto/images/robot/JumpShoot1.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot2.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot3.png"),
                    pygame.image.load("../Roboto/images/robot/JumpShoot4.png"),
-                   pygame.image.load("../Roboto/images/robot/JumpShoot5.png")]
+                   pygame.image.load("../Roboto/images/robot/JumpShoot5.png"))
 
-bulletImages = [pygame.image.load("../Roboto/images/projectiles/PlayerBullet1.png"),
+# Tuple for bullet images
+bulletImages = (pygame.image.load("../Roboto/images/projectiles/PlayerBullet1.png"),
                 pygame.image.load("../Roboto/images/projectiles/PlayerBullet2.png"),
                 pygame.image.load("../Roboto/images/projectiles/PlayerBullet3.png"),
                 pygame.image.load("../Roboto/images/projectiles/PlayerBullet4.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerBullet5.png")]
+                pygame.image.load("../Roboto/images/projectiles/PlayerBullet5.png"))
 
-muzzleImages = [pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle1.png"),
+# Tuple for muzzle images
+muzzleImages = (pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle1.png"),
                 pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle2.png"),
                 pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle3.png"),
                 pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle4.png"),
-                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle5.png")]
+                pygame.image.load("../Roboto/images/projectiles/PlayerMuzzle5.png"))
 
-deadImages = [pygame.image.load("../Roboto/images/robot/Dead1.png"),
+# Tuple for dead images
+deadImages = (pygame.image.load("../Roboto/images/robot/Dead1.png"),
               pygame.image.load("../Roboto/images/robot/Dead2.png"),
               pygame.image.load("../Roboto/images/robot/Dead3.png"),
               pygame.image.load("../Roboto/images/robot/Dead4.png"),
@@ -73,7 +92,7 @@ deadImages = [pygame.image.load("../Roboto/images/robot/Dead1.png"),
               pygame.image.load("../Roboto/images/robot/Dead7.png"),
               pygame.image.load("../Roboto/images/robot/Dead8.png"),
               pygame.image.load("../Roboto/images/robot/Dead9.png"),
-              pygame.image.load("../Roboto/images/robot/Dead10.png")]
+              pygame.image.load("../Roboto/images/robot/Dead10.png"))
 
 
 def leftImageMode(image):
@@ -138,7 +157,7 @@ class player:
                                   # that are blit to the screen.
 
         # Image Cycle Counters -- These counters allow the program to cycle through the sprites to animate them. They
-        # are reset to 0 when the animation resets.
+        # are reset to 0 when the animation resets. They were used to access the index of each image.
         self.idleCycleCount = 0  # image cycle counter for the idle animation.
         self.idleShootCount = 0  # image cycle counter for the idle and shooting animation.
         self.runCycleCount = 0   # image cycle counter for the running animation.
@@ -285,7 +304,6 @@ class player:
             self.currentY = self.y
             self.currentDirection = self.direction
             self.finishedShot = False
-            self.playShotSound()
             self.resetBulletBounds()
         else:
             self.updateBulletBounds()
@@ -357,8 +375,12 @@ class player:
         self.bulletBounds = [0, 0, 0, 0]
 
     def ripRoboto(self, pronounceDead):
+        # This if condition will keep running as long as deadCycleCount is below the ((len(deadImages) - 1) * 8) - 1.
+        # deadCycleCount increments every time this function runs and the if condition is satisfied. This means that
+        # once deadCycleCount is equal to ((len(deadImages) - 1) * 8) - 1, the code in the if statement will stop
+        # running. deadCycleCount will reset in the resetRoboto function.
         if self.deadCycleCount < ((len(deadImages) - 1) * 8) - 1 and self.gotShot:
-            self.deadCycleCount += 1
+            self.deadCycleCount += 1  # increment deadCycleCount by 1
             self.y = 600 - 155 - (130 / 2)
 
             if self.direction == "right":
@@ -373,7 +395,7 @@ class player:
     def resetRoboto(self):
         self.isDead = False
         self.gotShot = False
-        self.deadCycleCount = 0
+        self.deadCycleCount = 0  # deadCycleCount resets to 0 for the next time ripRoboto runs
         self.hasRestarted = True
         self.updateBounds()
         self.currentDirection = "right"

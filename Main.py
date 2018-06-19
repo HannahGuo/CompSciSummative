@@ -1,3 +1,9 @@
+# Hannah Guo and Manav Shardha
+# June 18th 2018
+# ICS3UR
+# This is the main file for our game. It contains each game state (start screen, pause, game loop, game over) as a
+# function. It also contains the display's features (colours, background, and buttons).
+
 import os
 import pygame
 import time
@@ -5,8 +11,8 @@ import pickle
 
 from Roboto import Player, Button, SquareIcon, EnemyRobot
 
-pygame.init()
-os.environ['SDL_VIDEO_CENTERED'] = '1'
+pygame.init()  # this initializes pygame
+os.environ['SDL_VIDEO_CENTERED'] = '1'  # this centers the window to the center of the user's screen
 
 # Color Definitions
 white = (255, 255, 255)
@@ -19,8 +25,8 @@ darkYellow = (255, 204, 0)
 yellow = (255, 255, 0)
 darkGrey = (51, 51, 51)
 
-displayWidth = 800
-displayHeight = 600
+displayWidth = 800   # this defines the display width to be 800 pixels. This is later used when creating the window.
+displayHeight = 600  # this defines the display height to 600 pixels. This is later used when creating the window.
 centerDisplayWidth = displayWidth / 2
 centerDisplayHeight = displayHeight / 2
 buttonWidth = 150
@@ -68,14 +74,13 @@ score = 0
 highScore = 0
 hitTimer = 0
 
-try:
-    with open('score.dat', 'rb') as file:
-        # highScore = 0
-        highScore = pickle.load(file)
-except:
-    highScore = 0
-    with open('score.dat', 'wb') as file:
-        pickle.dump(highScore, file)
+# this try/except block handles accessing a high score
+try:  # this attempts to open a file
+    with open('score.dat', 'rb') as file:  # opens score.dat to read
+        highScore = pickle.load(file)  # set highScore to the loaded file
+except:  # if there is no score.dat file, then this creates one. Without this except, the program would crash.
+    with open('score.dat', 'wb') as file:  # opens score.dat to write
+        pickle.dump(highScore, file)  # put the highScore (which is 0 if this runs) in the pickle file
 
 startButton = Button.Button(grey, black, gameDisplay, "START", centerDisplayWidth - (buttonWidth / 2),
                             centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
@@ -124,15 +129,12 @@ def startScreen():
         quitButton.showButton()
 
         if not justReset:
-            if startButton.isHovered(getCursorPos()):
-                if isLeftMouseClicked():
-                    gameLoop()
-            elif helpButton.isHovered(getCursorPos()):
-                if isLeftMouseClicked():
-                    helpScreen("start")
-            elif quitButton.isHovered(getCursorPos()):
-                if isLeftMouseClicked():
-                    quitProgram()
+            if startButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+                gameLoop()
+            elif helpButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+                helpScreen("start")
+            elif quitButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+                quitProgram()
         elif justReset and not isLeftMouseClicked():
             justReset = False
 
@@ -187,15 +189,13 @@ def helpScreen(lastScreen):
         gameDisplay.blit(spaceBar, [90, displayHeight - 150])
 
         xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black, defaultFont)
+        xButton.showIcon()
 
-        if xButton.left < getCursorPos()[0] < xButton.left + xButton.size and xButton.top < getCursorPos()[1] < \
-                xButton.top + xButton.size:
-            xButton.hover()
-            if isLeftMouseClicked():
-                if lastScreen == "start":
-                    startScreen()
-                elif lastScreen == "pause":
-                    pause()
+        if xButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+            if lastScreen == "start":
+                startScreen()
+            elif lastScreen == "pause":
+                pause()
 
         pygame.display.update()
 
@@ -207,71 +207,84 @@ def gameLoop():
     global addScore
     global showHit
     global hitTimer
-    while True:
+    while True:  # this loop continues running until another function is called, or if the program quits. It contains
+                 # all of the game loop code.
+        events = pygame.event.get()  # this gets a list of pygame's events and assigns it to the events variable.
+        for event in events:         # this for loop loop through the events list defined above. This essentially gets
+                                     # all of pygame's events, like mouse button presses. However, for this program the
+                                     # only event we handle is the QUIT event (when the application's X button is
+                                     # clicked).
+            if event.type == pygame.QUIT:  # if the user wants to quit
+                quitProgram()              # quit the program; this function is defined later on in the main file.
+
         roboto.hasRestarted = False
         gameDisplay.blit(caveBackground, (0, 0))
         gameDisplay.fill(ground, (0, displayHeight - 100, displayWidth, 100))
 
-        events = pygame.event.get()
-        keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()  # receives the values of each key button in a dictionary. If a key is pressed,
+                                         # its boolean value will be True and if it's not, it will be False. This is
+                                         # used to access the user's keyboard input.
 
-        for event in events:
-            if event.type == pygame.QUIT:
-                quitProgram()
+        if keys[pygame.K_SPACE]:  # this handles if the user pressed the space bar, which triggers the shoot function.
+            roboto.keepShooting = True  # since the space bar is still pressed, the robot should keep shooting
+            roboto.isShooting = True    # since the user pressed the space bar, the robot is shooting. This variable
+                                        # controls the shooting, which is shown later on in the code.
+        else:                           # otherwise, space isn't being pressed
+            roboto.keepShooting = False  # this means that the robot is not still shooting, so set keepShooting to false
 
-        if keys[pygame.K_SPACE]:
-            roboto.keepShooting = True
-            roboto.isShooting = True
-
-        if not keys[pygame.K_SPACE]:
-            roboto.keepShooting = False
-
+        # The following if condition handles shooting. Note that roboto.keepShooting and roboto.isShooting are
+        # conditions in the statement, and at least one of them must be true in order for robot to shoot (although they
+        # are not the only conditions that must be met). Therefore, the user's input of a space bar press that set these
+        # variables to true controls the shoot function.
         if (roboto.isShooting and roboto.shootPos < roboto.shootRange or not roboto.finishedShot) or \
                 roboto.keepShooting:
             if int(round(time.time() * 1000)) - roboto.lastShot >= 200 or not roboto.keepShooting:
                 if roboto.shootPos == 0:
                     addScore = True
-                roboto.shoot()
+                roboto.shoot()  # this function is the shot itself.
         else:
             roboto.isShooting = False
 
-        if not roboto.gotShot:
+        if not roboto.gotShot:  # this only runs if the robot hasn't been shot (i.e. hasn't died yet). This is to make
+                                # sure that the player's x and y positions don't change during a dying animation.
+            # This if statement will stop the robot's continuous shooting if the user switches directions. This means
+            # that the current direction is not the same as they keyboard input. (i.e. robot going right then left
+            # arrow key is preesed or robot going left then right arrow key is pressed).
             if (roboto.direction == "right" and keys[pygame.K_LEFT]) or \
                     (roboto.direction == "left" and keys[pygame.K_RIGHT]):
-                roboto.keepShooting = False
+                roboto.keepShooting = False  # set keepShooting to false
 
+            # This if statement checks if the user wants the player to move left. The conditions for this are that
+            # the left arrow key is pressed, the robot's x value is within the minimum boundary (-30) and the right
+            # arrow key is not pressed.
             if keys[pygame.K_LEFT] and (roboto.x > -30) and not keys[pygame.K_RIGHT]:
-                roboto.movingAnimation("left")
+                roboto.movingAnimation("left")  # make the robot move left.
+            # This elif statement checks if the user wants the player to move left. The conditions for this are that
+            # the right arrow key is pressed, the robot's x value is within the maximum boundary (695) and the left
+            # arrow key is not pressed.
             elif keys[pygame.K_RIGHT] and (roboto.x < 695) and not keys[pygame.K_LEFT]:
-                roboto.movingAnimation("right")
-            else:
-                roboto.idleAnimation()
+                roboto.movingAnimation("right")  # make the robot move right
+            else:  # if neither of these conditions are met, then the robot will not move and run its idle animation
+                roboto.idleAnimation()  # run the idle animation
 
-            if not roboto.jumping:
+            if not roboto.jumping:  # condition checking if the robot is currently jumping. We don't want the robot to
+                                    # jump again before its previous jump was finished.
+                # The following if statement checks if the up arrow key was pressed, and if the robot's last jump was
+                # 350 milliseconds ago. The 350ms delay is to make sure the robot doesn't quickly jump consecutively.
                 if keys[pygame.K_UP] and int(round(time.time() * 1000)) - roboto.lastJump >= 350:
-                    roboto.lastJump = 0
-                    roboto.jumping = True
-            else:
-                roboto.jump()
+                    roboto.lastJump = 0    # reset the robot's last jump timer to 0
+                    roboto.jumping = True  # sets jumping to true, meaning the robot can now jump
+            else:  # otherwise, the robot can jump
+                roboto.jump()  # make the robot jump
 
+            # This if statement is for the enemy's shot. It checks if the random interval between the enemy's shots has
+            # passed or not. It's in this if condition because we don't want the enemy to keep shooting after the player
+            #  has died.
             if int(round(time.time() * 1000)) - enemy.lastShot >= enemy.randomInterval:
-                enemy.shoot()
-                enemy.isShooting = True
-            else:
-                enemy.isShooting = False
-
-        if not musicStart:
-            music(mainMusic)
-            musicStart = True
-
-        pauseButton = SquareIcon.SquareIcon(darkYellow, yellow, gameDisplay, "| |", displayWidth - 50, 20, 30, darkGrey,
-                                            pauseFont)
-
-        if pauseButton.left < getCursorPos()[0] < pauseButton.left + pauseButton.size and \
-                pauseButton.top < getCursorPos()[1] < pauseButton.top + pauseButton.size:
-            pauseButton.hover()
-            if isLeftMouseClicked():
-                pause()
+                enemy.shoot()  # make the enemy shoot
+                enemy.isShooting = True  # set the enemy's shooting status to True
+            else:  # otherwise, the interval hasn't been met
+                enemy.isShooting = False  # set the enemy's shooting status to False
 
         if checkCollision(roboto.playerBounds[0], roboto.playerBounds[1], roboto.playerBounds[2],
                           roboto.playerBounds[3], enemy.bulletBounds[0], enemy.bulletBounds[1], enemy.bulletBounds[2],
@@ -307,6 +320,18 @@ def gameLoop():
         gameDisplay.blit(enemy.currentEnemy, (enemy.x, enemy.y))
         gameDisplay.blit(roboto.currentPlayer, (roboto.x, roboto.y))
         showScores(score > highScore)
+
+        if not musicStart:
+            music(mainMusic)
+            musicStart = True
+
+        pauseButton = SquareIcon.SquareIcon(darkYellow, yellow, gameDisplay, "| |", displayWidth - 50, 20, 30, darkGrey,
+                                            pauseFont)
+        pauseButton.showIcon()
+
+        if pauseButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+            pause()
+
         pygame.display.update()
         clock.tick(FPS)
 
@@ -329,15 +354,12 @@ def pause():
         helpButton.showButton()
         quitButton.showButton()
 
-        if resumeButton.isHovered(getCursorPos()):
-            if isLeftMouseClicked():
-                gameLoop()
-        elif helpButton.isHovered(getCursorPos()):
-            if isLeftMouseClicked():
-                helpScreen("pause")
-        elif quitButton.isHovered(getCursorPos()):
-            if isLeftMouseClicked():
-                quitProgram()
+        if resumeButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+            gameLoop()
+        elif helpButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+            helpScreen("pause")
+        elif quitButton.isHovered(getCursorPos()) and isLeftMouseClicked():
+            quitProgram()
 
         pygame.display.update()
 
@@ -384,6 +406,26 @@ def isLeftMouseClicked():
 
 
 def checkCollision(minX1, maxX1, minY1, maxY1, minX2, maxX2, minY2, maxY2):
+    """
+    This function checks if two objects collide. Every parameter with a 1 is for the first object, and every parameter
+    with a 2 is for the second object. The minimum X value (minX) is for the lowest X value of the object. The maximum
+    X value (maxX) is for the highest X value of the object. The minimum Y value (minY) is for the lowest Y value of
+    the object. The maximum Y value (maxY) is for the highest Y value of the object.
+
+    The function checks if the minimum or maximum X value of object 1 is within the minimum and maximum X value of
+    object 2, and also if the minimum or maximum Y value of object 2 is within the minimum and maximum Y value of
+    object 1. It returns a boolean of whether or not the objects have collided (basically if the conditions above are
+    true or false).
+    :param minX1:
+    :param maxX1:
+    :param minY1:
+    :param maxY1:
+    :param minX2:
+    :param maxX2:
+    :param minY2:
+    :param maxY2:
+    :return:
+    """
     return (minX2 <= minX1 <= maxX2 or minX2 <= maxX1 <= maxX2) and (minY1 <= minY2 <= maxY1 or minY1 <= maxY2 <= maxY1)
 
 

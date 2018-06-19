@@ -1,9 +1,16 @@
+# Hannah Guo and Manav Shardha
+# June 18th 2018
+# ICS3UR
+# This class is for the enemy robot. It's similar to the Player Class, but has no movement functions due to the enemy
+# being static, or death variables since it can't die. The enemy robot can, however, shoot. It's shots' velocity and
+# range are randomized in order to provide a harder challenge for the player.
+
 import pygame
 import time
 import random
 
 # Image Assignments
-idleImages = [pygame.image.load("../Roboto/images/darkrobot/Idle1.png"),
+idleImages = (pygame.image.load("../Roboto/images/darkrobot/Idle1.png"),
               pygame.image.load("../Roboto/images/darkrobot/Idle2.png"),
               pygame.image.load("../Roboto/images/darkrobot/Idle3.png"),
               pygame.image.load("../Roboto/images/darkrobot/Idle4.png"),
@@ -12,26 +19,26 @@ idleImages = [pygame.image.load("../Roboto/images/darkrobot/Idle1.png"),
               pygame.image.load("../Roboto/images/darkrobot/Idle7.png"),
               pygame.image.load("../Roboto/images/darkrobot/Idle8.png"),
               pygame.image.load("../Roboto/images/darkrobot/Idle9.png"),
-              pygame.image.load("../Roboto/images/darkrobot/Idle10.png")]
+              pygame.image.load("../Roboto/images/darkrobot/Idle10.png"))
 
-idleShootImages = [pygame.image.load("../Roboto/images/darkrobot/Shoot1.png"),
+idleShootImages = (pygame.image.load("../Roboto/images/darkrobot/Shoot1.png"),
                    pygame.image.load("../Roboto/images/darkrobot/Shoot2.png"),
                    pygame.image.load("../Roboto/images/darkrobot/Shoot3.png"),
-                   pygame.image.load("../Roboto/images/darkrobot/Shoot4.png")]
+                   pygame.image.load("../Roboto/images/darkrobot/Shoot4.png"))
 
-bulletImages = [pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png"),
+bulletImages = (pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png"),
                 pygame.image.load("../Roboto/images/projectiles/EnemyBullet2.png"),
                 pygame.image.load("../Roboto/images/projectiles/EnemyBullet3.png"),
                 pygame.image.load("../Roboto/images/projectiles/EnemyBullet4.png"),
-                pygame.image.load("../Roboto/images/projectiles/EnemyBullet5.png")]
+                pygame.image.load("../Roboto/images/projectiles/EnemyBullet5.png"))
 
-muzzleImages = [pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle1.png"),
+muzzleImages = (pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle1.png"),
                 pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle2.png"),
                 pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle3.png"),
                 pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle4.png"),
-                pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle5.png")]
+                pygame.image.load("../Roboto/images/projectiles/EnemyMuzzle5.png"))
 
-deadImages = [pygame.image.load("../Roboto/images/darkrobot/Dead1.png"),
+deadImages = (pygame.image.load("../Roboto/images/darkrobot/Dead1.png"),
               pygame.image.load("../Roboto/images/darkrobot/Dead2.png"),
               pygame.image.load("../Roboto/images/darkrobot/Dead3.png"),
               pygame.image.load("../Roboto/images/darkrobot/Dead4.png"),
@@ -40,7 +47,7 @@ deadImages = [pygame.image.load("../Roboto/images/darkrobot/Dead1.png"),
               pygame.image.load("../Roboto/images/darkrobot/Dead7.png"),
               pygame.image.load("../Roboto/images/darkrobot/Dead8.png"),
               pygame.image.load("../Roboto/images/darkrobot/Dead9.png"),
-              pygame.image.load("../Roboto/images/darkrobot/Dead10.png")]
+              pygame.image.load("../Roboto/images/darkrobot/Dead10.png"))
 
 
 def leftImageMode(image):
@@ -71,8 +78,12 @@ class enemy:
         self.bulletCycleCount = 0
 
         # Shooting Variables
-        self.shootRange = random.randint(150, 350)
-        self.shotVelocity = random.randint(6, 14)
+        self.shootRange = random.randint(150, 350)  # generates a random integer for the shoot range between 150 and
+                                                    # 350. This is the pixel value of how far the shot will go
+                                                    # initially.
+        self.shotVelocity = random.randint(6, 14)   # generates a random integer for the shot velocity between 6 and
+                                                    # 14. This is the pixel value of how fast the shot will move
+                                                    # when the initial shoot function is called.
         self.shootPos = 0
         self.currentBullet = bulletImages[0]
         self.lastShot = int(round(time.time() * 1000))
