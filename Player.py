@@ -292,7 +292,7 @@ class player:
                 self.idleAnimation()  # stop the robot from moving and play the idle animation. This will stop the
                                       # images from stopping mid-cycle when they hit the limit (i.e. jumping will stop
                                       # in midair, etc.)
-            self.updateBounds()  # this updates the boundaries of the player after the movement
+        self.updatePlayerBounds()  # this updates the boundaries of the player after the movement
 
     def jump(self):
         if self.jumpCounter >= -self.jumpBound:
@@ -308,7 +308,7 @@ class player:
                 else:
                     self.currentPlayer = pygame.transform.scale(jumpImages[self.jumpCounter // 3],
                                                                 (self.width, self.height))
-                    self.updateBounds()
+                    self.updatePlayerBounds()
             else:
                 if self.isShooting:
                     self.jumpShootCycleCount += 1
@@ -385,11 +385,11 @@ class player:
         self.shootPos = 0
         self.updateBulletBounds()
 
-    def updateBounds(self):
+    def updatePlayerBounds(self):
         if self.direction == "right":
             self.playerBounds = [self.x + 30, self.x + 85, self.y + 15, self.y + 120]
         else:
-            self.playerBounds = [self.x + 100, self.x + 40, self.y + 15, self.y + 120]
+            self.playerBounds = [self.x + 40, self.x + 100, self.y + 15, self.y + 120]
 
     def updateBulletBounds(self):
         if self.direction == "right":
@@ -423,7 +423,7 @@ class player:
         self.gotShot = False
         self.deadCycleCount = 0  # deadCycleCount resets to 0 for the next time ripRoboto runs
         self.hasRestarted = True
-        self.updateBounds()
+        self.updatePlayerBounds()
         self.currentDirection = "right"
 
     @staticmethod

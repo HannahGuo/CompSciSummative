@@ -154,17 +154,30 @@ def startScreen():
 
 
 def helpScreen(lastScreen):
-    xMargin = 100
+    """
+    This function displays the help screen for the user. It shows the goal of the game, and the controls.
+    :param lastScreen:
+    :return:
+    """
     while True:
+        xMargin = 100  # sets the value of the xMargin for the text
+
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
                 quitProgram()
 
-        gameDisplay.blit(caveBackground, (0, 0))
-        gameDisplay.fill(ground, (50, 50, displayWidth - 100, displayHeight - 100))
+        gameDisplay.blit(caveBackgroundHome, (0, 0))  # displays the cave background at (0, 0), meaning it will take up
+                                                      # the whole screen
+        gameDisplay.fill(ground, (50, 50, displayWidth - 100, displayHeight - 100))  # displays a backdrop the colour
+                                                                                     # of the ground for the text
+                                                                                     # so that it's easier to see
+        titleText = titleFont.render("Help", True, white)  # renders the title of the screen "Help" in a white font.
 
-        titleText = titleFont.render("Help", True, white)
+        # Each helpText block is a rendered line of text. Pygame doesn't have paragraph support, so each line was
+        # adjusted to have the right number of words to fit on the screen. The font is always white since that is the
+        # clearest on the backdrop. The font most frequently used is the defaultFont, although the controls subtitle
+        # uses the subtitle font.
         helpText1 = defaultFont.render("You play as Roboto, the robot. Roboto has been created to test the ", True,
                                        white)
         helpText2 = defaultFont.render("strength of Dark Roboto. Survive as long as you can, and earn", True,
@@ -175,6 +188,9 @@ def helpScreen(lastScreen):
         helpText6 = defaultFont.render("Up Arrow Key to Jump", True, white)
         helpText7 = defaultFont.render("Space Bar to Shoot", True, white)
 
+        # display all the help texts to the screen at the specified x and y coordinates. This is where xMargin is used
+        # to keep the x margin consistent. The y value was then adjusted by a constant in order for it to display
+        # in neat lines below each other.
         gameDisplay.blit(titleText, [xMargin, 100])
         gameDisplay.blit(helpText1, [xMargin, 150])
         gameDisplay.blit(helpText2, [xMargin, 180])
@@ -183,21 +199,27 @@ def helpScreen(lastScreen):
         gameDisplay.blit(helpText5, [300, displayHeight - 280])
         gameDisplay.blit(helpText6, [300, displayHeight - 215])
         gameDisplay.blit(helpText7, [300, displayHeight - 140])
+
+        # These lines display keyboard visuals for the left, right, up keys and the space bar. Each image's x and y
+        # values were tuned to line up with their corresponding text.
         gameDisplay.blit(leftKey, [120, displayHeight - 290])
         gameDisplay.blit(rightKey, [180, displayHeight - 290])
         gameDisplay.blit(upKey, [150, displayHeight - 220])
         gameDisplay.blit(spaceBar, [90, displayHeight - 150])
 
+        # This creates a red X icon in the top right corner. This is for the user to return to their previous screen.
         xButton = SquareIcon.SquareIcon(red, lightRed, gameDisplay, "X", displayWidth - 100, 70, 30, black, defaultFont)
-        xButton.showIcon()
+        xButton.showIcon()  # puts the x button on the screen
 
+        # This makes the X button more responsive by changing the colour when it is hovered (done in the isHovered
+        # function). The if statement checks if the button was hovered and the mouse was clicked.
         if xButton.isHovered(getCursorPos()) and isLeftMouseClicked():
-            if lastScreen == "start":
-                startScreen()
-            elif lastScreen == "pause":
-                pause()
+            if lastScreen == "start":  # if the last screen was the start screen, go back to the start screen.
+                startScreen()          # call the start screen function
+            elif lastScreen == "pause":   # if the last screen was the pause screen, go back to the pause screen.
+                pause()                   # call the pause function to show its screen
 
-        pygame.display.update()
+        pygame.display.update()  # update the display to see the changes
 
 
 def gameLoop():
@@ -333,6 +355,7 @@ def gameLoop():
         if pauseButton.isHovered(getCursorPos()) and isLeftMouseClicked():
             pause()
 
+        print(roboto.playerBounds, getCursorPos())
         pygame.display.update()
         clock.tick(FPS)
 

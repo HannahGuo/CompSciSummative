@@ -17,7 +17,7 @@ Restrictions - The display window cannot change size due to scaling.
 Known Errors - None
 Implementation Details / How to Build Programs - The user needs to download the files off of the master branch of this
 project's Github repository (link in Additional Files). This can be done by having Git installed and using the git clone
-command, or by downloading it as a .zip file. They also need Python 3.6.5 and the latest version of Pygame
+command, or by downloading it as a .zip file. They also need Python 3.6.5 and the latest version of Pygame.
 installed. The user should then run Main.py to launch the game.
 Additional Files - Every file included in the master branch of the project's Github repository, found at
 https://github.com/HannahGuo/Roboto
