@@ -6,7 +6,7 @@
 # to the center of the screen.
 
 
-class Button(object):
+class button(object):
     def __init__(self, colour, hoverColour, display, text, left, top, width, height, textColour, offset, centerWidth,
                  centerHeight, font):
         self.colour = colour

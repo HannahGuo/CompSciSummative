@@ -27,12 +27,12 @@ darkGrey = (51, 51, 51)
 
 displayWidth = 800   # this defines the display width to be 800 pixels. This is later used when creating the window.
 displayHeight = 600  # this defines the display height to 600 pixels. This is later used when creating the window.
-centerDisplayWidth = displayWidth / 2
-centerDisplayHeight = displayHeight / 2
-buttonWidth = 150
-buttonHeight = 50
-groundHeight = displayHeight - 150
-FPS = 60
+centerDisplayWidth = (displayWidth / 2)  # defines the center of display width
+centerDisplayHeight = (displayHeight / 2)  # defines the center of display height
+buttonWidth = 150  # defines the pixel width of the buttons. This will be used in the button constructor.
+buttonHeight = 50  # defines the pixel height of the buttons. This will be used in the button constructor.
+groundHeight = displayHeight - 150  # defines the ground height (where the robot's minimum Y value will be)
+FPS = 60  # this variable defines the number of frames per second, which is used in pygame's clock later on
 
 titleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 35)
 subTitleFont = pygame.font.Font("../Roboto/Krona_One/KronaOne-Regular.ttf", 25)
@@ -44,13 +44,15 @@ pygame.mixer.init()
 startScreenMusic = "../Roboto/music/Roboto.mp3"
 mainMusic = "../Roboto/music/Blackout.mp3"
 
-gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))
+gameDisplay = pygame.display.set_mode((displayWidth, displayHeight))  # sets the pygame window's size to displayWidth
+                                                                      # and displayHeight
 pygame.display.set_caption("Roboto")
 clock = pygame.time.Clock()
 
 # icon = pygame.image.load("../Roboto/images/projectiles/EnemyBullet1.png")
 # pygame.display.set_icon(icon)
 
+# Loads images
 caveBackgroundHome = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"),
                                             (displayWidth, displayHeight))
 caveBackground = pygame.transform.scale(pygame.image.load("../Roboto/images/Cave.jpg"),
@@ -60,7 +62,10 @@ rightKey = pygame.transform.scale(pygame.image.load("../Roboto/images/RightKey.p
 upKey = pygame.transform.scale(pygame.image.load("../Roboto/images/UpKey.png"), (50, 50))
 spaceBar = pygame.transform.scale(pygame.image.load("../Roboto/images/Space.png"), (180, 60))
 
+# Creates a player object called roboto
 roboto = Player.player(20, displayHeight - 155 - (130 / 2), gameDisplay)
+
+# Creates an enemy object called enemy
 enemy = EnemyRobot.enemy(displayWidth - 150, displayHeight - 155 - (130 / 2), gameDisplay)
 
 startScreenRobot = Player.player(displayWidth - 30, 55, gameDisplay)
@@ -82,19 +87,23 @@ except:  # if there is no score.dat file, then this creates one. Without this ex
     with open('score.dat', 'wb') as file:  # opens score.dat to write
         pickle.dump(highScore, file)  # put the highScore (which is 0 if this runs) in the pickle file
 
-startButton = Button.Button(grey, black, gameDisplay, "START", centerDisplayWidth - (buttonWidth / 2),
+# Creates a button object called startButton
+startButton = Button.button(grey, black, gameDisplay, "START", centerDisplayWidth - (buttonWidth / 2),
                             centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                             centerDisplayHeight, defaultFont)
 
-helpButton = Button.Button(grey, black, gameDisplay, "HELP", centerDisplayWidth - (buttonWidth / 2),
+# Creates a button object called helpButton
+helpButton = Button.button(grey, black, gameDisplay, "HELP", centerDisplayWidth - (buttonWidth / 2),
                            centerDisplayHeight + 50, buttonWidth, buttonHeight, white, 50, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
 
-quitButton = Button.Button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
+# Creates a button object called quitButton
+quitButton = Button.button(grey, black, gameDisplay, "QUIT", centerDisplayWidth - (buttonWidth / 2),
                            centerDisplayHeight + 130, buttonWidth, buttonHeight, white, 130, centerDisplayWidth,
                            centerDisplayHeight, defaultFont)
 
-resumeButton = Button.Button(grey, black, gameDisplay, "RESUME", centerDisplayWidth - (buttonWidth / 2),
+# Creates a button object called resumeButton
+resumeButton = Button.button(grey, black, gameDisplay, "RESUME", centerDisplayWidth - (buttonWidth / 2),
                              centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                              centerDisplayHeight, defaultFont)
 
@@ -113,40 +122,50 @@ def startScreen():
             if event.type == pygame.QUIT:
                 quitProgram()
 
-        gameDisplay.blit(caveBackgroundHome, (0, 0))
-        startScreenRobot.movingAnimation("right")
+        gameDisplay.blit(caveBackgroundHome, (0, 0))  # draws the background onto the display at (0, 0). This results in
+                                                      # a full-screen background.
+        startScreenRobot.movingAnimation("right")  # creates an animation of a robot running right on the screen
 
+        # The code below renders and displays the title of the game ("Roboto") in a white font and blits it to the
+        # display at the specified coordinates.
         screen_text = titleFont.render("Roboto", True, white)
         gameDisplay.blit(screen_text, [(displayWidth / 2) - (screen_text.get_rect().width / 2),
                                        (displayHeight / 2) - (screen_text.get_rect().height / 2) - 100])
 
-        startButton.showButton()
-        helpButton.showButton()
-        quitButton.showButton()
+        startButton.showButton()  # This function is used to draw startButton onto the display
+        helpButton.showButton()   # This function is used to draw helpButton onto the display
+        quitButton.showButton()   # This function is used to draw quitButton onto the display
 
-        if not justReset:
-            if startButton.isHovered(getCursorPos()) and isLeftMouseClicked():
-                gameLoop()
-            elif helpButton.isHovered(getCursorPos()) and isLeftMouseClicked():
-                helpScreen("start")
-            elif quitButton.isHovered(getCursorPos()) and isLeftMouseClicked():
-                quitProgram()
-        elif justReset and not isLeftMouseClicked():
-            justReset = False
+        if not justReset:  # if the program has just reset, we don't want any of the code here to run or else the start
+                           # screen will never display.
+            if startButton.isHovered(getCursorPos()) and isLeftMouseClicked():  # if the start button is hovered and the
+                                                                                # mouse is clicked
+                gameLoop()  # run the game loop
+            elif helpButton.isHovered(getCursorPos()) and isLeftMouseClicked():  # if the help button is hovered and the
+                                                                                 # mouse is clicked
+                helpScreen("start")  # show the start screen
+            elif quitButton.isHovered(getCursorPos()) and isLeftMouseClicked():  # if the quit button is hovered and the
+                                                                                 # mouse is clicked
+                quitProgram()  # quit the program
+        elif justReset and not isLeftMouseClicked():  # if the user has just reset and is not clicking
+            justReset = False  # the program can now activate the buttons in the if statement above
 
-        if startScreenRobot.x > displayWidth + 1400:
-            startScreenRobot.x = -(startScreenRobot.width / 2)
-        elif 200 <= startScreenRobot.x <= 400:
-            startScreenRobot.isShooting = True
-        else:
-            startScreenRobot.isShooting = False
+        if startScreenRobot.x > displayWidth + 1400:  # if the start screen robot is off the screen
+            startScreenRobot.x = -(startScreenRobot.width / 2)  # reset the start screen robot's x
+        elif 200 <= startScreenRobot.x <= 400:  # if the start screen robot's x value is between 200 and 400,
+            startScreenRobot.isShooting = True  # set shooting to true. This will make the robot's sprite shoot.
+        else:  # otherwise, run this
+            startScreenRobot.isShooting = False  # this will make isShooting false, meaning that the robot will just
+                                                 # normally run across the screen
 
+        # Display the start screen robot (blit it to the display).
         gameDisplay.blit(startScreenRobot.currentPlayer, (startScreenRobot.x, startScreenRobot.y))
 
+        # The following code displays the text that shows the creators in a white font near the bottom of the display.
         creators = subSubTitleFont.render("Created by Hannah Guo & Manav Shardha", True, white)
         gameDisplay.blit(creators, [(displayWidth / 2) - (creators.get_rect().width / 2), displayHeight - 50])
 
-        pygame.display.update()
+        pygame.display.update()  # updates the display
 
 
 def helpScreen(lastScreen):
