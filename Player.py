@@ -234,39 +234,65 @@ class player:
                                                             (self.width, self.height))
 
     def movingAnimation(self, direction):
-        if self.runCycleCount > ((len(runImages) - 1) * 3) - 1:
-            self.runCycleCount = 0
-        self.runCycleCount += 1
+        """
+        This function handles the movement of the player.
+        :param direction:
+        :return:
+        """
+        if self.runCycleCount > ((len(runImages) - 1) * 3) - 1:  # this if statement will reset the running images
+                                                                 # cycle counter if it's over the limit of
+                                                                 # ((len(runImages) - 1) * 3) - 1.
+            self.runCycleCount = 0  # resets runCycleCount to 0
+        self.runCycleCount += 1     # increments runCycleCount by 1. This effectively has runCycleCount running in a
+                                    # loop, where it resets every time it hits ((len(runImages) - 1) * 3) - 1.
 
-        if direction == "left":
-            self.x -= self.velocity
-            self.direction = direction
-            if self.isShooting:
-                self.runShootCycleCount += 1
-                if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
-                    self.runShootCycleCount = 0
+        if direction == "left":  # this code runs if the robot is currently moving left (left key pressed)
+            self.x -= self.velocity  # moving left means that the velocity is subtracted from the x value
+            self.direction = direction  # this sets the current direction to this direction. Otherwise, the robot
+                                        # will flip as soon as they right key isn't pressed.
+            if self.isShooting:  # if the robot is shooting, run this code
+                if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:  # reset runShootCycleCount if
+                    # it's over the specified limit
+                    self.runShootCycleCount = 0  # reset runShootCycleCount
+                self.runShootCycleCount += 1  # increment the runShootCycleCount
+                # The code below sets the current player to the left version of the robot's running and shooting
+                # sprite. The index of runShootImages is accessed by using integer division by 3 on the cycler,
+                # which is also why the limit above is 3.
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(runShootImages[self.runShootCycleCount // 3], (self.width, self.height)))
-            else:
+            else:  # if the robot isn't shooting, run this
+                # The code below sets the current player to the left version of the robot's running sprite
+                # The index of runImages is accessed by using integer division by 3 on the cycler, which is also why the
+                #  limit above is multiplied by 3.
                 self.currentPlayer = leftImageMode(
                     pygame.transform.scale(runImages[self.runCycleCount // 3], (self.width, self.height)))
 
-        elif direction == "right":
-            if self.x < 580:
-                self.x += self.velocity
-                self.direction = direction
-                if self.isShooting:
-                    self.runShootCycleCount += 1
-                    if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:
-                        self.runShootCycleCount = 0
+        elif direction == "right":  # this code runs if the robot is currently moving right (right key pressed)
+            if self.x < 580:  # this makes sure that the robot's x value doesn't cross the enemy's boundary.
+                self.x += self.velocity  # moving left means that the velocity is subtracted from the x value
+                self.direction = direction  # this sets the current direction to this direction. Otherwise, the robot
+                # will flip as soon as they right key isn't pressed.
+                if self.isShooting:  # if the robot is shooting, run this code
+                    if self.runShootCycleCount > ((len(runShootImages) - 1) * 3) - 1:  # reset runShootCycleCount if
+                        # it's over the specified limit
+                        self.runShootCycleCount = 0  # reset runShootCycleCount
+                    self.runShootCycleCount += 1  # increment the runShootCycleCount
+                    # The code below sets the current player to the right version of the robot's running and shooting
+                    # sprite. The index of runShootImages is accessed by using integer division by 3 on the cycler,
+                    # which is also why the limit above is 3.
                     self.currentPlayer = pygame.transform.scale(runShootImages[self.runShootCycleCount // 3],
                                                                 (self.width, self.height))
-                else:
+                else:  # if the robot isn't shooting, run this
+                    # The code below sets the current player to the right version of the robot's running sprite
+                    # The index of runImages is accessed by using integer division by 3 on the cycler, which is also
+                    # why the limit above is multiplied by 3.
                     self.currentPlayer = pygame.transform.scale(runImages[self.runCycleCount // 3],
                                                                 (self.width, self.height))
-            else:
-                self.idleAnimation()
-        self.updateBounds()
+            else:  # if the boundary does cross
+                self.idleAnimation()  # stop the robot from moving and play the idle animation. This will stop the
+                                      # images from stopping mid-cycle when they hit the limit (i.e. jumping will stop
+                                      # in midair, etc.)
+            self.updateBounds()  # this updates the boundaries of the player after the movement
 
     def jump(self):
         if self.jumpCounter >= -self.jumpBound:
@@ -399,3 +425,10 @@ class player:
         self.hasRestarted = True
         self.updateBounds()
         self.currentDirection = "right"
+
+    @staticmethod
+    def playShotSound():
+        shootingSound = "../Roboto/music/Blaster.wav"
+        shootingSoundEffect = pygame.mixer.Sound(shootingSound)
+        shootingSoundEffect.set_volume(0.2)
+        shootingSoundEffect.play()

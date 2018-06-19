@@ -306,6 +306,7 @@ def gameLoop():
         if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
                           roboto.bulletBounds[0], roboto.bulletBounds[1], roboto.bulletBounds[2],
                           roboto.bulletBounds[3]) and addScore:
+            roboto.playShotSound()
             roboto.endShot()
             showHit = True
             hitTimer = int(round(time.time() * 1000))
