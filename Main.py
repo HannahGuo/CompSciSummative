@@ -322,7 +322,7 @@ def gameLoop():
                 with open('score.dat', 'rb') as fileName:
                     highScore = pickle.load(fileName)
                 with open('score.dat', 'wb') as fileName:
-                    pickle.dump(score, fileName)
+                    pickle.dump(highScore, fileName)
             gameOver()
 
         if checkCollision(enemy.playerBounds[0], enemy.playerBounds[1], enemy.playerBounds[2], enemy.playerBounds[3],
@@ -355,7 +355,6 @@ def gameLoop():
         if pauseButton.isHovered(getCursorPos()) and isLeftMouseClicked():
             pause()
 
-        print(roboto.playerBounds, getCursorPos())
         pygame.display.update()
         clock.tick(FPS)
 
