@@ -95,7 +95,7 @@ class enemy:
         self.bulletX = 0
         self.bulletY = self.y + (self.height / 2) - 20
         self.randomInterval = random.randint(300, 2000)
-        self.bulletBounds = [self.bulletX, self.bulletX + 35, self.bulletY + 40, self.bulletY + 8]
+        self.bulletBounds = [0, 0, 0, 0]
 
     def idleAnimation(self):
         if not self.isShooting:
