@@ -98,10 +98,6 @@ resumeButton = Button.Button(grey, black, gameDisplay, "RESUME", centerDisplayWi
                              centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
                              centerDisplayHeight, defaultFont)
 
-homeButton = Button.Button(grey, black, gameDisplay, "HOME", centerDisplayWidth - (buttonWidth / 2),
-                           centerDisplayHeight - 30, buttonWidth, buttonHeight, white, -30, centerDisplayWidth,
-                           centerDisplayHeight, defaultFont)
-
 
 def music(soundtrack):
     pygame.mixer.music.load(soundtrack)
